@@ -2,17 +2,25 @@ package com.valuewith.tweaver.auth.service;
 
 import com.valuewith.tweaver.auth.dto.AuthDto;
 import com.valuewith.tweaver.auth.dto.AuthDto.EmailInput;
+import com.valuewith.tweaver.auth.dto.AuthDto.SignInForm;
 import com.valuewith.tweaver.commons.redis.RedisUtilService;
+import com.valuewith.tweaver.commons.security.TokenService;
 import com.valuewith.tweaver.constants.ImageType;
 import com.valuewith.tweaver.defaultImage.entity.DefaultImage;
 import com.valuewith.tweaver.defaultImage.repository.DefaultImageRepository;
 import com.valuewith.tweaver.defaultImage.service.ImageService;
+import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -27,7 +35,7 @@ public class AuthService {
   private final ImageService imageService;
 
   @Transactional
-  public EmailInput signUp(AuthDto.SignUpForm form, MultipartFile file) {
+  public void signUp(AuthDto.SignUpForm form, MultipartFile file) {
     String profileUrl = "";
     if (file != null && !file.isEmpty()) {
       // 사진을 받아온 경우 이미지 등록
@@ -41,9 +49,7 @@ public class AuthService {
     // 비밀번호 암호화
     form.setPassword(this.passwordEncoder.encode(form.getPassword()));
 
-    return EmailInput.from(
-        memberRepository.save(form.setProfileUrl(profileUrl))
-    );
+    memberRepository.save(form.setProfileUrl(profileUrl));
   }
 
   public void sendEmailVerification(AuthDto.EmailInput input) {

@@ -1,14 +1,11 @@
 package com.valuewith.tweaver.auth.dto;
 
 import com.valuewith.tweaver.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public class AuthDto {
 
-  // TODO: 로그인
 
   @Data
   @NoArgsConstructor
@@ -43,15 +40,7 @@ public class AuthDto {
 
   @Data
   @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
   public static class EmailInput {
     private String email;
-
-    public static EmailInput from(Member member) {
-      return EmailInput.builder()
-          .email(member.getEmail())
-          .build();
-    }
   }
 }

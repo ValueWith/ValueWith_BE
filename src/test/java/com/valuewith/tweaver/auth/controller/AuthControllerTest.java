@@ -73,4 +73,24 @@ class AuthControllerTest {
         )
         .andExpect(status().isOk());
   }
+
+  @Test
+  @WithMockUser
+  @DisplayName("회원가입 성공-이미지 없음")
+  void success_signup_test_without_image() throws Exception {
+    /**
+     * 회원가입 성공여부는 SignUpForm 필드가 모두 작성될 경우입니다.
+     * 이미지가 있는 경우
+     */
+    mockMvc.perform(
+            multipart("/auth/signup")
+                .param("age", String.valueOf(signUpForm.getAge()))
+                .param("email", signUpForm.getEmail())
+                .param("gender", signUpForm.getGender())
+                .param("nickname", signUpForm.getNickname())
+                .param("password", signUpForm.getPassword())
+                .with(csrf())
+        )
+        .andExpect(status().isOk());
+  }
 }

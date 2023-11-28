@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoomDto {
+public class ChatRoomDto{
   private Long chatRoomId;
   private Long tripGroupId;
   private String title;

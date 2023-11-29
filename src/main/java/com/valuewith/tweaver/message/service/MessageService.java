@@ -8,6 +8,7 @@ import com.valuewith.tweaver.message.entity.Message;
 import com.valuewith.tweaver.message.repository.MessageRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class MessageService {
   private final ChatRoomRepository chatRoomRepository;
   private final MessageRepository messageRepository;
 
+  @Transactional
   public void deleteMessage(Long tripGroupId) {
     ChatRoom chatRoom = chatRoomRepository.findByTripGroupTripGroupId(tripGroupId)
         .orElseThrow(() -> new RuntimeException("삭제 하려는 메세지의 채팅방이 존재하지 않습니다."));

@@ -114,4 +114,10 @@ public class TripGroupService {
     return tripGroupRepository.findTripGroupsByMember_MemberId(
         memberId);
   }
+
+  public Boolean checkLeader(Member member, Long tripGroupId) {
+    TripGroup foundTripGroup = tripGroupRepository.findById(tripGroupId)
+        .orElseThrow(() -> new RuntimeException("삭제하려는 그룹이 존재하지 않습니다."));
+    return foundTripGroup.getMember().equals(member);
+  }
 }

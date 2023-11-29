@@ -10,4 +10,6 @@ public interface AlertDsl {
   Long getAlertCountByMemberId(Long memberId);
 
   void checkAllByMemberId(Long memberId);
+
+  void deleteByTripGroupId(Long tripGroupId);
 }

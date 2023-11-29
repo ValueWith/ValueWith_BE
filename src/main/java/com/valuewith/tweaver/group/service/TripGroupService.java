@@ -95,9 +95,13 @@ public class TripGroupService {
     List<GroupMember> groupMembers
         = groupMemberRepository.findApprovedMembersByTripGroupId(tripGroupId);
 
+    TripGroup tripGroup = tripGroupRepository.findByTripGroupId(tripGroupId)
+            .orElseThrow(() -> new RuntimeException("그룹 정보가 존재하지 않습니다."));
+
     groupMembers.stream().forEach(groupMember -> {
       eventPublisher.publishEvent(AlertRequestDto.builder()
           .groupId(tripGroupId)
+          .groupName(tripGroup.getName())
           .member(groupMember.getMember())
           .content(alertContent)
           .build());

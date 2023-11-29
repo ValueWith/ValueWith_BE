@@ -19,17 +19,18 @@ public class AlertResponseDto {
   private String redirectUrl;
   private AlertContent content;
   private LocalDateTime createdDateTime;
+  private Boolean isChecked;
   private Long groupId;
   private String groupName;
 
-  public static AlertResponseDto from(Alert alert, String groupName) {
+  public static AlertResponseDto from(Alert alert) {
     return AlertResponseDto.builder()
         .alertId(alert.getAlertId())
         .content(alert.getContent())
         .groupId(alert.getGroupId())
         .createdDateTime(alert.getCreatedDateTime())
         .redirectUrl(alert.getRedirectUrl())
-        .groupName(groupName)
+        .groupName(alert.getGroupName())
         .build();
   }
 }

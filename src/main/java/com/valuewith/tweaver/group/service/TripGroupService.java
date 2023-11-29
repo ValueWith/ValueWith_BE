@@ -95,9 +95,13 @@ public class TripGroupService {
     List<GroupMember> groupMembers
         = groupMemberRepository.findApprovedMembersByTripGroupId(tripGroupId);
 
+    TripGroup tripGroup = tripGroupRepository.findByTripGroupId(tripGroupId)
+            .orElseThrow(() -> new RuntimeException("그룹 정보가 존재하지 않습니다."));
+
     groupMembers.stream().forEach(groupMember -> {
       eventPublisher.publishEvent(AlertRequestDto.builder()
           .groupId(tripGroupId)
+          .groupName(tripGroup.getName())
           .member(groupMember.getMember())
           .content(alertContent)
           .build());
@@ -109,5 +113,11 @@ public class TripGroupService {
   public List<TripGroup> findMyTripGroupListByMemberId(Long memberId) {
     return tripGroupRepository.findTripGroupsByMember_MemberId(
         memberId);
+  }
+
+  public Boolean checkLeader(Member member, Long tripGroupId) {
+    TripGroup foundTripGroup = tripGroupRepository.findById(tripGroupId)
+        .orElseThrow(() -> new RuntimeException("삭제하려는 그룹이 존재하지 않습니다."));
+    return foundTripGroup.getMember().equals(member);
   }
 }

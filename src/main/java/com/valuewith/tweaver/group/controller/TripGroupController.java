@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.group.controller;
 
+import com.valuewith.tweaver.alert.service.AlertService;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.service.ChatRoomService;
 import com.valuewith.tweaver.commons.security.service.TokenService;
@@ -39,6 +40,7 @@ public class TripGroupController {
   private final GroupMemberService groupMemberService;
   private final MessageService messageService;
   private final TokenService tokenService;
+  private final AlertService alertService;
 
   @ApiOperation(value = "여행 그룹 생성 API")
   @PostMapping
@@ -68,26 +70,36 @@ public class TripGroupController {
     placeService.modifiedPlace(tripGroup, tripGroupRequestDto.getPlaces());
     // 3.채팅 수정(그룹명 수정으로 인한 채팅룸 제목 수정)
     chatRoomService.modifiedChatRoom(tripGroup);
-    // 4.그룹 멤버에게 그룹 수정에 대한 알림
+    // 4.알람에서 그룹명 수정
+    alertService.modifiedAlertGroupName(tripGroup);
+    // 5.그룹 멤버에게 그룹 수정에 대한 알림
     tripGroupService.sendTripGroupAlert(tripGroup.getTripGroupId(), AlertContent.UPDATE_GROUP_PLAN);
     return ResponseEntity.ok("ok");
   }
 
   @ApiOperation(value = "여행 그룹 삭제 API", notes = "이 API 호출 시 메세지/채팅룸/장소/여행그룹 이 동시에 삭제되고 그룹멤버에게 삭제 알림을 발송합니다.")
   @DeleteMapping("/{tripGroupId}")
-  public ResponseEntity<String> deleteGroup(@PathVariable("tripGroupId") Long tripGroupId) {
+  public ResponseEntity<String> deleteGroup(@PathVariable("tripGroupId") Long tripGroupId,
+      @RequestHeader("Authorization") String token) {
+    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
+    // 0.삭제하려고 하는 사람이 그룹장인지 확인
+    if(tripGroupService.checkLeader(member, tripGroupId).equals(Boolean.FALSE)){
+      throw new RuntimeException("그룹장만 그룹을 삭제 할 수 있습니다.");
+    }
     // 1.메세지 삭제
     messageService.deleteMessage(tripGroupId);
     // 2.채팅 삭제
     chatRoomService.deleteChatRoom(tripGroupId);
     // 3.일정 삭제
     placeService.deletePlaces(tripGroupId);
-    // 4.그룹 삭제
-    tripGroupService.deleteTripGroup(tripGroupId);
-    // 5.그룹 멤버 삭제
+    // 4.그룹 멤버 삭제
     groupMemberService.deleteGroupMember(tripGroupId);
+    // 5.알람 삭제
+    alertService.deleteAlertByTripGroupId(tripGroupId);
     // 6.그룹 멤버에게 그룹 삭제에 대한 알림
     tripGroupService.sendTripGroupAlert(tripGroupId, AlertContent.DELETED_GROUP);
+    // 7.그룹 삭제
+    tripGroupService.deleteTripGroup(tripGroupId);
 
     return ResponseEntity.ok("ok");
   }

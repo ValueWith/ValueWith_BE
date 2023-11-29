@@ -42,6 +42,9 @@ public class Alert extends BaseEntity {
   @NotNull
   private Long groupId;
 
+  @NotNull
+  private String groupName;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
   private Member member;
@@ -71,6 +74,7 @@ public class Alert extends BaseEntity {
         .redirectUrl(redirectUrl)
         .isChecked(false)
         .groupId(alertRequestDto.getGroupId())
+        .groupName(alertRequestDto.getGroupName())
         .build();
   }
 }

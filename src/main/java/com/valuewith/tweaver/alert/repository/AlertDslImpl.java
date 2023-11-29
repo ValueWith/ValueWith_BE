@@ -1,19 +1,16 @@
 package com.valuewith.tweaver.alert.repository;
 
 import static com.valuewith.tweaver.alert.entity.QAlert.*;
-import static com.valuewith.tweaver.group.entity.QTripGroup.*;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.valuewith.tweaver.alert.dto.AlertResponseDto;
-import com.valuewith.tweaver.alert.entity.QAlert;
-import com.valuewith.tweaver.constants.GroupStatus;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 @RequiredArgsConstructor
 public class AlertDslImpl implements AlertDsl {
@@ -21,28 +18,37 @@ public class AlertDslImpl implements AlertDsl {
   private final JPAQueryFactory query;
 
   @Override
-  public List<AlertResponseDto> getAlertsByMemberId(Long memberId) {
-    return query.select(
+  public Slice<AlertResponseDto> getAlertsByMemberId(Long memberId, Pageable pageable) {
+    List<AlertResponseDto> alertResponseDtoList = query.select(
             Projections.fields(AlertResponseDto.class,
                 alert.alertId,
                 alert.redirectUrl,
                 alert.content,
+                alert.isChecked,
                 alert.createdDateTime,
                 alert.groupId,
-                ExpressionUtils.as(
-                    JPAExpressions.select(tripGroup.name)
-                        .from(tripGroup)
-                        .where(tripGroup.tripGroupId.eq(alert.groupId))
-                        .distinct(),
-                    "groupName"))
+                alert.groupName)
         ).from(alert)
         .where((alert.member.memberId.eq(memberId))
             .and(alert.isDeleted.eq(false))
         )
         .orderBy(alert.createdDateTime.desc())
-        .fetch()
-        .stream()
-        .collect(Collectors.toList());
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize() + 1)
+        .fetch();
+
+    List<AlertResponseDto> alerts = new ArrayList<>();
+    for (AlertResponseDto alertResponseDto: alertResponseDtoList) {
+      alerts.add(alertResponseDto);
+    }
+
+    boolean hasNext = false;
+    if (alerts.size() > pageable.getPageSize()) {
+      alerts.remove(pageable.getPageSize());
+      hasNext = true;
+    }
+
+    return new SliceImpl<>(alerts, pageable, hasNext);
   }
 
   @Override
@@ -60,7 +66,28 @@ public class AlertDslImpl implements AlertDsl {
     query
         .update(alert)
         .set(alert.isChecked, true)
-        .where(alert.member.memberId.eq(memberId))
+        .where(alert.member.memberId.eq(memberId)
+            .and(alert.isDeleted.eq(Boolean.FALSE)))
+        .execute();
+  }
+
+  @Override
+  public void deleteByTripGroupId(Long tripGroupId) {
+    query
+        .update(alert)
+        .set(alert.isDeleted, true)
+        .where(alert.groupId.eq(tripGroupId)
+            .and(alert.isDeleted.eq(Boolean.FALSE)))
+        .execute();
+  }
+
+  @Override
+  public void modifiedGroupNameByTripGroupId(Long tripGroupId, String groupName) {
+    query
+        .update(alert)
+        .set(alert.groupName, groupName)
+        .where(alert.groupId.eq(tripGroupId)
+            .and(alert.isDeleted.eq(Boolean.FALSE)))
         .execute();
   }
 

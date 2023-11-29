@@ -5,13 +5,15 @@ import com.valuewith.tweaver.alert.dto.AlertResponseDto;
 import com.valuewith.tweaver.alert.entity.Alert;
 import com.valuewith.tweaver.alert.repository.AlertRepository;
 import com.valuewith.tweaver.alert.repository.EmitterRepository;
+import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.repository.TripGroupRepository;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -70,9 +72,7 @@ public class AlertService {
           sendAlert(emitter,
               eventId,
               key,
-              AlertResponseDto.from(
-                  saveAlert,
-                  tripGroupRepository.findById(saveAlert.getGroupId()).get().getName()));
+              AlertResponseDto.from(saveAlert));
           sendAlertCount(emitter,eventId, key, getAlertCount(memberId));
         }
     );
@@ -111,8 +111,9 @@ public class AlertService {
   }
 
   // 알람 조회
-  public List<AlertResponseDto> getAlerts(Long memberId) {
-    return alertRepository.getAlertsByMemberId(memberId);
+  public Slice<AlertResponseDto> getAlerts(Long memberId, Pageable pageable) {
+
+    return alertRepository.getAlertsByMemberId(memberId, pageable);
   }
 
   // 읽은 알람 isChecked true로 설정
@@ -144,4 +145,11 @@ public class AlertService {
     return alertRepository.getAlertCountByMemberId(memberId);
   }
 
+  public void deleteAlertByTripGroupId(Long tripGroupId) {
+    alertRepository.deleteByTripGroupId(tripGroupId);
+  }
+
+  public void modifiedAlertGroupName(TripGroup tripGroup) {
+    alertRepository.modifiedGroupNameByTripGroupId(tripGroup.getTripGroupId(), tripGroup.getName());
+  }
 }

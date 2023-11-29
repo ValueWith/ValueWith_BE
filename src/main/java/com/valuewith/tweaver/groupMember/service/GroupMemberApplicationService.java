@@ -60,10 +60,11 @@ public class GroupMemberApplicationService {
 
     // 신청이 왔을 때 알람 보내기
     eventPublisher.publishEvent(AlertRequestDto.builder()
-        .groupId(tripGroupId)
-        .member(tripGroup.getMember())
-        .content(AlertContent.NEW_APPLICATION)
-        .build());
+            .groupId(tripGroupId)
+            .groupName(tripGroup.getName())
+            .member(tripGroup.getMember())
+            .content(AlertContent.NEW_APPLICATION)
+            .build());
   }
 
   public void deleteApplication(Long tripGroupId, String memberEmail) {
@@ -86,6 +87,7 @@ public class GroupMemberApplicationService {
     // 신청이 거절 되었을 때 알람 보내기
     eventPublisher.publishEvent(AlertRequestDto.builder()
         .groupId(foundGroupMember.getTripGroup().getTripGroupId())
+        .groupName(foundGroupMember.getTripGroup().getName())
         .member(foundGroupMember.getMember())
         .content(AlertContent.APPLICATION_REJECT)
         .build());
@@ -108,6 +110,7 @@ public class GroupMemberApplicationService {
     // 신청이 승인 되었을 때 알람 보내기
     eventPublisher.publishEvent(AlertRequestDto.builder()
         .groupId(foundGroupMember.getTripGroup().getTripGroupId())
+        .groupName(foundGroupMember.getTripGroup().getName())
         .member(foundGroupMember.getMember())
         .content(AlertContent.APPLICATION_APPLY)
         .build());
@@ -118,11 +121,12 @@ public class GroupMemberApplicationService {
         foundGroupMember.getTripGroup().getTripGroupId(),
         foundGroupMember.getMember().getMemberId());
     groupMembers.stream().forEach(groupMember -> {
-          eventPublisher.publishEvent(AlertRequestDto.builder()
-              .groupId(groupMember.getTripGroup().getTripGroupId())
-              .member(groupMember.getMember())
-              .content(AlertContent.ADD_MEMBER)
-              .build());
+      eventPublisher.publishEvent(AlertRequestDto.builder()
+          .groupId(groupMember.getTripGroup().getTripGroupId())
+          .groupName(foundGroupMember.getTripGroup().getName())
+          .member(groupMember.getMember())
+          .content(AlertContent.ADD_MEMBER)
+          .build());
         }
     );
 

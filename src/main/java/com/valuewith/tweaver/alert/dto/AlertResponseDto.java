@@ -19,6 +19,7 @@ public class AlertResponseDto {
   private String redirectUrl;
   private AlertContent content;
   private LocalDateTime createdDateTime;
+  private Boolean isChecked;
   private Long groupId;
   private String groupName;
 

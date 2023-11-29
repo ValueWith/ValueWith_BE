@@ -1,10 +1,11 @@
 package com.valuewith.tweaver.alert.repository;
 
 import com.valuewith.tweaver.alert.dto.AlertResponseDto;
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface AlertDsl {
-  List<AlertResponseDto> getAlertsByMemberId(Long memberId);
+  Slice<AlertResponseDto> getAlertsByMemberId(Long memberId, Pageable pageable);
 
   Long getAlertCountByMemberId(Long memberId);
 

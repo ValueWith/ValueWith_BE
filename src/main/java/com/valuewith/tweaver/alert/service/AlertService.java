@@ -5,6 +5,7 @@ import com.valuewith.tweaver.alert.dto.AlertResponseDto;
 import com.valuewith.tweaver.alert.entity.Alert;
 import com.valuewith.tweaver.alert.repository.AlertRepository;
 import com.valuewith.tweaver.alert.repository.EmitterRepository;
+import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.repository.TripGroupRepository;
 import java.io.IOException;
 import java.util.Map;
@@ -146,5 +147,9 @@ public class AlertService {
 
   public void deleteAlertByTripGroupId(Long tripGroupId) {
     alertRepository.deleteByTripGroupId(tripGroupId);
+  }
+
+  public void modifiedAlertGroupName(TripGroup tripGroup) {
+    alertRepository.modifiedGroupNameByTripGroupId(tripGroup.getTripGroupId(), tripGroup.getName());
   }
 }

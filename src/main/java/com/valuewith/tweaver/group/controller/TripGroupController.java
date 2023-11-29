@@ -70,7 +70,9 @@ public class TripGroupController {
     placeService.modifiedPlace(tripGroup, tripGroupRequestDto.getPlaces());
     // 3.채팅 수정(그룹명 수정으로 인한 채팅룸 제목 수정)
     chatRoomService.modifiedChatRoom(tripGroup);
-    // 4.그룹 멤버에게 그룹 수정에 대한 알림
+    // 4.알람에서 그룹명 수정
+    alertService.modifiedAlertGroupName(tripGroup);
+    // 5.그룹 멤버에게 그룹 수정에 대한 알림
     tripGroupService.sendTripGroupAlert(tripGroup.getTripGroupId(), AlertContent.UPDATE_GROUP_PLAN);
     return ResponseEntity.ok("ok");
   }

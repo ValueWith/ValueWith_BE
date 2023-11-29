@@ -30,12 +30,7 @@ public class AlertDslImpl implements AlertDsl {
                 alert.isChecked,
                 alert.createdDateTime,
                 alert.groupId,
-                ExpressionUtils.as(
-                    JPAExpressions.select(tripGroup.name)
-                        .from(tripGroup)
-                        .where(tripGroup.tripGroupId.eq(alert.groupId))
-                        .distinct(),
-                    "groupName"))
+                alert.groupName)
         ).from(alert)
         .where((alert.member.memberId.eq(memberId))
             .and(alert.isDeleted.eq(false))

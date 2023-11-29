@@ -71,9 +71,7 @@ public class AlertService {
           sendAlert(emitter,
               eventId,
               key,
-              AlertResponseDto.from(
-                  saveAlert,
-                  tripGroupRepository.findById(saveAlert.getGroupId()).get().getName()));
+              AlertResponseDto.from(saveAlert));
           sendAlertCount(emitter,eventId, key, getAlertCount(memberId));
         }
     );

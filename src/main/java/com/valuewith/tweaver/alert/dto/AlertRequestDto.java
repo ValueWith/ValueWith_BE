@@ -20,5 +20,6 @@ public class AlertRequestDto {
   private AlertContent content;
   private LocalDateTime createDate;
   private Long groupId;
+  private String groupName;
   private Member member;
 }

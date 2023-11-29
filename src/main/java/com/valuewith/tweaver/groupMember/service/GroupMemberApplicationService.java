@@ -3,6 +3,7 @@ package com.valuewith.tweaver.groupMember.service;
 import com.valuewith.tweaver.alert.dto.AlertRequestDto;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.repository.ChatRoomRepository;
+import com.valuewith.tweaver.chat.service.ChatRoomService;
 import com.valuewith.tweaver.constants.AlertContent;
 import com.valuewith.tweaver.constants.ErrorCode;
 import com.valuewith.tweaver.exception.CustomException;
@@ -12,10 +13,14 @@ import com.valuewith.tweaver.groupMember.entity.GroupMember;
 import com.valuewith.tweaver.groupMember.repository.GroupMemberRepository;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
+import com.valuewith.tweaver.member.service.MemberService;
+import com.valuewith.tweaver.message.dto.MessageDto;
+import com.valuewith.tweaver.message.service.MessageService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +34,9 @@ public class GroupMemberApplicationService {
   private final ChatRoomRepository chatRoomRepository;
   private final MemberRepository memberRepository;
   private final TripGroupRepository tripGroupRepository;
+  private final MessageService messageService;
+  private final SimpMessageSendingOperations simpMessageSendingOperations;
+  private final MemberService memberService;
 
   private final ApplicationEventPublisher eventPublisher;
 
@@ -44,7 +52,7 @@ public class GroupMemberApplicationService {
       throw new CustomException(ErrorCode.MEMBER_COUNT_MAX);
     }
 
-    if(exists) {
+    if (exists) {
       throw new RuntimeException("이미 신청한 그룹 입니다. 같은 그룹에 중복 신청할 수 없습니다.");
     } else {
       groupMemberRepository.save(GroupMember.from(tripGroup, member));
@@ -52,10 +60,10 @@ public class GroupMemberApplicationService {
 
     // 신청이 왔을 때 알람 보내기
     eventPublisher.publishEvent(AlertRequestDto.builder()
-            .groupId(tripGroupId)
-            .member(tripGroup.getMember())
-            .content(AlertContent.NEW_APPLICATION)
-            .build());
+        .groupId(tripGroupId)
+        .member(tripGroup.getMember())
+        .content(AlertContent.NEW_APPLICATION)
+        .build());
   }
 
   public void deleteApplication(Long tripGroupId, String memberEmail) {
@@ -63,7 +71,8 @@ public class GroupMemberApplicationService {
         .orElseThrow(() -> new RuntimeException("멤버가 존재하지 않습니다."));
     // 대기중인 신청 검색
     GroupMember foundGroupMember
-        = groupMemberRepository.findPendingMembersByTripGroupIdAndMemberId(tripGroupId, member.getMemberId())
+        = groupMemberRepository.findPendingMembersByTripGroupIdAndMemberId(tripGroupId,
+            member.getMemberId())
         .orElseThrow(() -> new RuntimeException("대기중인 신청이 존재하지 않습니다."));
     foundGroupMember.cancelApplication();
   }
@@ -109,13 +118,27 @@ public class GroupMemberApplicationService {
         foundGroupMember.getTripGroup().getTripGroupId(),
         foundGroupMember.getMember().getMemberId());
     groupMembers.stream().forEach(groupMember -> {
-      eventPublisher.publishEvent(AlertRequestDto.builder()
-          .groupId(groupMember.getTripGroup().getTripGroupId())
-          .member(groupMember.getMember())
-          .content(AlertContent.ADD_MEMBER)
-          .build());
+          eventPublisher.publishEvent(AlertRequestDto.builder()
+              .groupId(groupMember.getTripGroup().getTripGroupId())
+              .member(groupMember.getMember())
+              .content(AlertContent.ADD_MEMBER)
+              .build());
         }
     );
+
+    // 승인된 그룹에게 채팅 보내기
+    sendHelloMessage(chatRoom, foundGroupMember);
   }
 
+  public void sendHelloMessage(ChatRoom chatRoom, GroupMember groupMember) {
+    Long memberId = groupMember.getMember().getMemberId();
+    Member sender = memberService.findMemberByMemberId(memberId);
+    String helloMessage =
+        sender.getNickName() + "님이 " + chatRoom.getTripGroup().getName() + "그룹에 참여하셨습니다.";
+
+    MessageDto newMessage = messageService.createMessage(chatRoom, sender, helloMessage);
+
+    simpMessageSendingOperations.convertAndSend("/sub/chat/room/" + chatRoom.getChatRoomId(),
+        newMessage);
+  }
 }

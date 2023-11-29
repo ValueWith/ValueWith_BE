@@ -1,13 +1,16 @@
 package com.valuewith.tweaver.alert.controller;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import com.valuewith.tweaver.alert.dto.AlertResponseDto;
 import com.valuewith.tweaver.alert.service.AlertService;
 import com.valuewith.tweaver.commons.security.service.TokenService;
 import com.valuewith.tweaver.member.entity.Member;
-import com.valuewith.tweaver.member.repository.MemberRepository;
 import com.valuewith.tweaver.member.service.MemberService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,10 +43,11 @@ public class AlertController {
 
   // 내 알림 목록 조회
   @GetMapping
-  public ResponseEntity<List<AlertResponseDto>> alerts(@RequestHeader("Authorization") String token) {
+  public ResponseEntity<Slice<AlertResponseDto>> alerts(@RequestHeader("Authorization") String token,
+      @PageableDefault(size = 20) Pageable pageable) {
     Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
 
-    return ResponseEntity.ok(alertService.getAlerts(member.getMemberId()));
+    return ResponseEntity.ok(alertService.getAlerts(member.getMemberId(), pageable));
   }
 
   /**

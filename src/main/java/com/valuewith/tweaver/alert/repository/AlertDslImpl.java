@@ -81,4 +81,14 @@ public class AlertDslImpl implements AlertDsl {
         .execute();
   }
 
+  @Override
+  public void modifiedGroupNameByTripGroupId(Long tripGroupId, String groupName) {
+    query
+        .update(alert)
+        .set(alert.groupName, groupName)
+        .where(alert.groupId.eq(tripGroupId)
+            .and(alert.isDeleted.eq(Boolean.FALSE)))
+        .execute();
+  }
+
 }

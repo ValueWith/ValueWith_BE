@@ -12,4 +12,6 @@ public interface AlertDsl {
   void checkAllByMemberId(Long memberId);
 
   void deleteByTripGroupId(Long tripGroupId);
+
+  void modifiedGroupNameByTripGroupId(Long tripGroupId, String groupName);
 }

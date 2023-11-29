@@ -144,4 +144,7 @@ public class AlertService {
     return alertRepository.getAlertCountByMemberId(memberId);
   }
 
+  public void deleteAlertByTripGroupId(Long tripGroupId) {
+    alertRepository.deleteByTripGroupId(tripGroupId);
+  }
 }

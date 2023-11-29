@@ -1,11 +1,8 @@
 package com.valuewith.tweaver.alert.repository;
 
 import static com.valuewith.tweaver.alert.entity.QAlert.*;
-import static com.valuewith.tweaver.group.entity.QTripGroup.*;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.valuewith.tweaver.alert.dto.AlertResponseDto;
 import java.util.ArrayList;
@@ -69,7 +66,18 @@ public class AlertDslImpl implements AlertDsl {
     query
         .update(alert)
         .set(alert.isChecked, true)
-        .where(alert.member.memberId.eq(memberId))
+        .where(alert.member.memberId.eq(memberId)
+            .and(alert.isDeleted.eq(Boolean.FALSE)))
+        .execute();
+  }
+
+  @Override
+  public void deleteByTripGroupId(Long tripGroupId) {
+    query
+        .update(alert)
+        .set(alert.isDeleted, true)
+        .where(alert.groupId.eq(tripGroupId)
+            .and(alert.isDeleted.eq(Boolean.FALSE)))
         .execute();
   }
 

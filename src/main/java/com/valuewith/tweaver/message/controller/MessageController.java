@@ -22,19 +22,6 @@ public class MessageController {
   private final MessageService messageService;
   private final SimpMessageSendingOperations simpMessageSendingOperations;
 
-  @MessageMapping("/message/join/{chatRoomId}/{memberId}")
-  public void enterMember(@DestinationVariable("chatRoomId") Long chatRoomId,
-      @DestinationVariable("memberId") Long memberId) {
-    ChatRoom chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
-    Member sender = memberService.findMemberByMemberId(memberId);
-    String helloMessage =
-        sender.getNickName() + "님이 " + chatRoom.getTripGroup().getName() + "그룹에 참여하셨습니다.";
-
-    MessageDto newMessage = messageService.createMessage(chatRoom, sender, helloMessage);
-
-    simpMessageSendingOperations.convertAndSend("/sub/chat/room/" + chatRoom.getChatRoomId(),
-        newMessage);
-  }
 
   @MessageMapping("/message/{chatRoomId}")
   public void sendMessage(@Payload MessageDto message,

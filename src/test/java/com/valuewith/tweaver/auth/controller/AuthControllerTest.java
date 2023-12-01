@@ -42,7 +42,6 @@ class AuthControllerTest {
   @Autowired
   MockMvc mockMvc;
 
-  ObjectMapper objectMapper;
   MockMultipartFile imgfile = new MockMultipartFile(
       "image", "test.jpeg", "image/jpeg", "image_content".getBytes());
   AuthDto.SignUpForm signUpForm = SignUpForm.builder()

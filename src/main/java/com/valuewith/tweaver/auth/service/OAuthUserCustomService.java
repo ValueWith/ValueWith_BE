@@ -51,6 +51,7 @@ public class OAuthUserCustomService implements OAuth2UserService<OAuth2UserReque
 
   private Provider getProvider(String registrationId) {
     // 다른 소셜로그인이 있다면 추가해야합니다.
+    // TODO: 허가받지 않은 url 호출시 카카오 로그인이 됩니다. 이부분 수정하면 될 것 같습니다. -eod940
     System.out.println(registrationId + " 로그인 진행중");
     return Provider.KAKAO;
   }

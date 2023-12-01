@@ -8,6 +8,7 @@ import com.valuewith.tweaver.message.entity.Message;
 import com.valuewith.tweaver.message.repository.MessageRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,6 @@
 package com.valuewith.tweaver;
 
-import com.valuewith.tweaver.config.AppPropertiesConfig;
+import com.valuewith.tweaver.config.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,11 +18,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 @EnableFeignClients
 @EnableScheduling
-@EnableConfigurationProperties({AppPropertiesConfig.class})
+@EnableConfigurationProperties({AppProperties.class})
 public class TweaverApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TweaverApplication.class, args);
 	}
-
 }

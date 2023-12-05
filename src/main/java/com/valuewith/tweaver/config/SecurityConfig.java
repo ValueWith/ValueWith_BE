@@ -37,7 +37,7 @@ public class SecurityConfig {
   private final CustomMemberDetailService customMemberDetailService;
   private final TokenService tokenService;
   private final MemberRepository memberRepository;
-  private final AppPropertiesConfig appProperties;
+  private final AppProperties appProperties;
 
   /**
    * swagger, h2-console 접근을 위한 설정입니다. 인증이 필요한 URI 목록 중 아래에 있는 [허용 URL]의 모든 접근을 허용합니다. 사실상 모든

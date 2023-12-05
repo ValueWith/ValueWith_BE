@@ -6,7 +6,7 @@ import com.valuewith.tweaver.auth.repository.HttpCookieOAuth2AuthorizationReques
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.commons.security.service.CookieService;
 import com.valuewith.tweaver.commons.security.service.TokenService;
-import com.valuewith.tweaver.config.AppPropertiesConfig;
+import com.valuewith.tweaver.config.AppProperties;
 import com.valuewith.tweaver.exception.CustomException;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
@@ -28,7 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
   private final HttpCookieOAuth2AuthorizationRequestRepository cookieRequestRepository;
-  private final AppPropertiesConfig appProperties;
+  private final AppProperties appProperties;
   private final TokenService tokenService;
   private final MemberRepository memberRepository;
 

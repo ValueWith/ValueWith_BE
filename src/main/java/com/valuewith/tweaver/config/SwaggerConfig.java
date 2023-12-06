@@ -11,6 +11,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -19,6 +20,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 @EnableSwagger2
 public class SwaggerConfig implements WebMvcConfigurer {
+
+  public static final String AUTH_TAG = "인증 API";
+  public static final String TRIP_LIST_TAG = "그룹 리스트 API";
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -37,6 +41,10 @@ public class SwaggerConfig implements WebMvcConfigurer {
         .apis(RequestHandlerSelectors.any())
         .paths(PathSelectors.any())
         .build()
+        .tags(
+            new Tag(AUTH_TAG, "회원 인증, 토큰 재발급을 담당"),
+            new Tag(TRIP_LIST_TAG, "여행 그룹 리스트 조회 담당")
+        )
         .useDefaultResponseMessages(false)
         .apiInfo(apiInfo());
   }

@@ -1,6 +1,7 @@
 package com.valuewith.tweaver.group.controller;
 
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.config.SwaggerConfig;
 import com.valuewith.tweaver.group.dto.TripGroupDetailResponseDto;
 import com.valuewith.tweaver.group.dto.TripGroupListResponseDto;
 import com.valuewith.tweaver.group.dto.TripGroupStatusListDto;
@@ -8,6 +9,7 @@ import com.valuewith.tweaver.group.dto.TripGroupStatusResponseDto;
 import com.valuewith.tweaver.group.service.TripGroupListService;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 @Slf4j
+@Api(tags = {SwaggerConfig.TRIP_LIST_TAG})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/groups/*")

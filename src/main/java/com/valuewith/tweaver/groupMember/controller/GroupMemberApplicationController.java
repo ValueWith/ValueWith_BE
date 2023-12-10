@@ -2,6 +2,7 @@ package com.valuewith.tweaver.groupMember.controller;
 
 import com.valuewith.tweaver.commons.security.service.TokenService;
 import com.valuewith.tweaver.groupMember.service.GroupMemberApplicationService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class GroupMemberApplicationController {
   private final TokenService tokenService;
   private final GroupMemberApplicationService groupMemberApplicationService;
 
+  @ApiOperation(value = "여행그룹 지원 API")
   @PostMapping("{tripGroupId}")
   public ResponseEntity<String> createApplication(
       @PathVariable("tripGroupId") Long tripGroupId,

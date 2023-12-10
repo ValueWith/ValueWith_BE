@@ -3,13 +3,13 @@ package com.valuewith.tweaver.chat.controller;
 
 import static com.valuewith.tweaver.constants.ErrorCode.NOT_A_MEMBER;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valuewith.tweaver.chat.dto.ChatRoomDto;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.service.ChatMemberService;
 import com.valuewith.tweaver.chat.service.ChatRoomService;
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.config.SwaggerConfig;
 import com.valuewith.tweaver.exception.CustomException;
 import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.service.TripGroupService;
@@ -18,6 +18,10 @@ import com.valuewith.tweaver.groupMember.service.GroupMemberService;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
 import com.valuewith.tweaver.message.service.MessageService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(tags = {SwaggerConfig.CHAT_TAG})
 @RestController
 @RequestMapping("/chat")
 @RequiredArgsConstructor
@@ -44,8 +49,11 @@ public class ChatRoomController {
   private final TripGroupService tripGroupService;
   private final TokenService tokenService;
   private final MessageService messageService;
-  private final ObjectMapper objectMapper;
 
+  @ApiOperation(
+      value = "채팅방 조회",
+      notes = "그룹원, 그룹장 모두 조회합니다."
+  )
   @GetMapping("/room")
   public ResponseEntity<List<ChatRoomDto>> findChatRooms(
       HttpServletRequest request) {
@@ -78,6 +86,13 @@ public class ChatRoomController {
     return ResponseEntity.ok(chatRoomList);
   }
 
+  @ApiOperation(
+      value = "채팅방 조회",
+      notes = "그룹원, 그룹장 모두 조회합니다."
+  )
+  @ApiResponses(value = {
+      @ApiResponse(code = 401, message = "멤버가 아닌 경우 발생합니다.")
+  })
   @PostMapping("/room/{chatRoomId}")
   public ResponseEntity<String> enterChatRoom(
       @AuthenticationPrincipal PrincipalDetails principalDetails,
@@ -98,6 +113,10 @@ public class ChatRoomController {
     return ResponseEntity.ok(chatMemberService.enterChatRoom(chatRoom, groupMember));
   }
 
+  @ApiOperation(
+      value = "채팅방 삭제",
+      notes = "채팅방에서 퇴장할 경우 삭제됩니다."
+  )
   @DeleteMapping("/room/{chatRoomId}")
   public ResponseEntity<String> exitChatRoom(
       @AuthenticationPrincipal PrincipalDetails principalDetails,

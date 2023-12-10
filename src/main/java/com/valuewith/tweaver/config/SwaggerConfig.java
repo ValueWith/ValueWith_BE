@@ -23,6 +23,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
   public static final String AUTH_TAG = "인증 API";
   public static final String TRIP_LIST_TAG = "그룹 리스트 API";
+  public static final String CHAT_TAG = "채팅 API";
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -43,7 +44,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
         .build()
         .tags(
             new Tag(AUTH_TAG, "회원 인증, 토큰 재발급을 담당"),
-            new Tag(TRIP_LIST_TAG, "여행 그룹 리스트 조회 담당")
+            new Tag(TRIP_LIST_TAG, "여행 그룹 리스트 조회 담당"),
+            new Tag(CHAT_TAG, "채팅 조회 담당")
         )
         .useDefaultResponseMessages(false)
         .apiInfo(apiInfo());

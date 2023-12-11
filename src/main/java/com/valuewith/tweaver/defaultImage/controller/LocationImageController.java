@@ -1,8 +1,10 @@
 package com.valuewith.tweaver.defaultImage.controller;
 
+import com.valuewith.tweaver.config.SwaggerConfig;
 import com.valuewith.tweaver.constants.ImageType;
 import com.valuewith.tweaver.defaultImage.dto.DefaultImageResponseDto;
 import com.valuewith.tweaver.defaultImage.service.ImageService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Api(tags = {SwaggerConfig.LOCATION_IMAGE_TAG})
 @Slf4j
 @RestController
 @RequiredArgsConstructor

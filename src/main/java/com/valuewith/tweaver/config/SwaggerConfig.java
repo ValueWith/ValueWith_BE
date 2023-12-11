@@ -31,6 +31,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
   public static final String MEMBER_TAG = "멤버 API";
   public static final String ALERT_TAG = "알림 API";
   public static final String RECOMMEND_ROUTE_TAG = "길 추천 API";
+  public static final String LOCATION_IMAGE_TAG = "이미지 API";
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -53,7 +54,13 @@ public class SwaggerConfig implements WebMvcConfigurer {
             new Tag(AUTH_TAG, "회원 인증, 토큰 재발급을 담당"),
             new Tag(TRIP_LIST_TAG, "여행 그룹 리스트 조회 담당"),
             new Tag(CHAT_TAG, "채팅 조회 담당"),
-            new Tag(TRIP_GROUP_TAG, "여행 그룹 조회 담당")
+            new Tag(TRIP_GROUP_TAG, "여행 그룹 조회 담당"),
+            new Tag(GROUP_MEMBER_APPLICATION_TAG, "그룹 참여 신청 담당"),
+            new Tag(GROUP_MEMBER_LIST_TAG, "그룹원 리스트 담당"),
+            new Tag(MEMBER_TAG, "회원 개인정보 담당"),
+            new Tag(ALERT_TAG, "알림 담당"),
+            new Tag(RECOMMEND_ROUTE_TAG, "길 추천 알고리즘 호출 담당"),
+            new Tag(LOCATION_IMAGE_TAG, "이미지 담당")
         )
         .useDefaultResponseMessages(false)
         .apiInfo(apiInfo());

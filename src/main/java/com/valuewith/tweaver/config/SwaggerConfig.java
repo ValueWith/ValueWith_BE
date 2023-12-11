@@ -27,6 +27,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
   public static final String TRIP_GROUP_TAG = "여행 그룹 API";
   public static final String GROUP_MEMBER_APPLICATION_TAG = "그룹 참여 신청 API";
   public static final String GROUP_MEMBER_LIST_TAG = "그룹원 리스트 API";
+  public static final String MEMBER_TAG = "멤버 API";
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {

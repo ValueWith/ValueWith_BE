@@ -78,4 +78,16 @@ public class GroupMemberRepositoryCustomImpl implements GroupMemberRepositoryCus
                 .and(groupMember.approvedStatus.eq(ApprovedStatus.PENDING)))
             .fetchOne());
     }
+
+    @Override
+    public Boolean exitsApplication(Long tripGroupId, Long memberId) {
+        Integer fetchOne = queryFactory.selectOne()
+            .from(groupMember)
+            .where(groupMember.tripGroup.tripGroupId.eq(tripGroupId)
+                .and(groupMember.member.memberId.eq(memberId))
+                .and(groupMember.approvedStatus.eq(ApprovedStatus.PENDING))
+                .and(groupMember.isDeleted.eq(Boolean.FALSE)))
+            .fetchFirst();
+        return fetchOne != null;
+    }
 }

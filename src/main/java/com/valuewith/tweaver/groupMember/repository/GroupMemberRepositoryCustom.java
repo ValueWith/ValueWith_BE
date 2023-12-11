@@ -17,4 +17,6 @@ public interface GroupMemberRepositoryCustom {
     GroupMember findApprovedMemberByTripGroupIdAndMemberId(Long tripGroupId, Long memberId);
 
     Optional<GroupMember> findPendingMembersByTripGroupIdAndMemberId(Long tripGroupId, Long memberId);
+
+    Boolean exitsApplication(Long tripGroupId, Long memberId);
 }

@@ -67,6 +67,7 @@ public class GroupMember extends BaseEntity {
 
   public void rejectApplication() {
     this.approvedStatus = ApprovedStatus.REJECTED;
+    this.isDeleted = true;
   }
   public void confirmApplication(ChatRoom chatRoom) {
     this.approvedStatus = ApprovedStatus.APPROVED;

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -29,6 +30,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
   public static final String GROUP_MEMBER_LIST_TAG = "그룹원 리스트 API";
   public static final String MEMBER_TAG = "멤버 API";
   public static final String ALERT_TAG = "알림 API";
+  public static final String RECOMMEND_ROUTE_TAG = "길 추천 API";
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -44,7 +46,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         .consumes(getConsumeContentTypes())
         .produces(getProduceContentTypes())
         .select()
-        .apis(RequestHandlerSelectors.any())
+        .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
         .paths(PathSelectors.any())
         .build()
         .tags(

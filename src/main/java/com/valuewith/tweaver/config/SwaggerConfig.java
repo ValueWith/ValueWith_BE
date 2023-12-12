@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,6 +24,14 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
   public static final String AUTH_TAG = "인증 API";
   public static final String TRIP_LIST_TAG = "그룹 리스트 API";
+  public static final String CHAT_TAG = "채팅 API";
+  public static final String TRIP_GROUP_TAG = "여행 그룹 API";
+  public static final String GROUP_MEMBER_APPLICATION_TAG = "그룹 참여 신청 API";
+  public static final String GROUP_MEMBER_LIST_TAG = "그룹원 리스트 API";
+  public static final String MEMBER_TAG = "멤버 API";
+  public static final String ALERT_TAG = "알림 API";
+  public static final String RECOMMEND_ROUTE_TAG = "길 추천 API";
+  public static final String LOCATION_IMAGE_TAG = "이미지 API";
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -38,12 +47,20 @@ public class SwaggerConfig implements WebMvcConfigurer {
         .consumes(getConsumeContentTypes())
         .produces(getProduceContentTypes())
         .select()
-        .apis(RequestHandlerSelectors.any())
+        .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
         .paths(PathSelectors.any())
         .build()
         .tags(
             new Tag(AUTH_TAG, "회원 인증, 토큰 재발급을 담당"),
-            new Tag(TRIP_LIST_TAG, "여행 그룹 리스트 조회 담당")
+            new Tag(TRIP_LIST_TAG, "여행 그룹 리스트 조회 담당"),
+            new Tag(CHAT_TAG, "채팅 조회 담당"),
+            new Tag(TRIP_GROUP_TAG, "여행 그룹 조회 담당"),
+            new Tag(GROUP_MEMBER_APPLICATION_TAG, "그룹 참여 신청 담당"),
+            new Tag(GROUP_MEMBER_LIST_TAG, "그룹원 리스트 담당"),
+            new Tag(MEMBER_TAG, "회원 개인정보 담당"),
+            new Tag(ALERT_TAG, "알림 담당"),
+            new Tag(RECOMMEND_ROUTE_TAG, "길 추천 알고리즘 호출 담당"),
+            new Tag(LOCATION_IMAGE_TAG, "이미지 담당")
         )
         .useDefaultResponseMessages(false)
         .apiInfo(apiInfo());

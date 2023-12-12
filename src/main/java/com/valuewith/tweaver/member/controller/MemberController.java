@@ -1,6 +1,7 @@
 package com.valuewith.tweaver.member.controller;
 
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.config.SwaggerConfig;
 import com.valuewith.tweaver.constants.ErrorCode;
 import com.valuewith.tweaver.constants.ImageType;
 import com.valuewith.tweaver.defaultImage.service.ImageService;
@@ -9,6 +10,8 @@ import com.valuewith.tweaver.member.dto.MemberRequestDto;
 import com.valuewith.tweaver.member.dto.MemberResponseDto;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Api(tags = {SwaggerConfig.MEMBER_TAG})
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class MemberController {
     private final MemberService memberService;
     private final ImageService imageService;
 
+    @ApiOperation(value = "마이라운지 프로필 수정 유저정보 API")
     @GetMapping
     public ResponseEntity<MemberResponseDto> getMemberProfile(
         @RequestHeader("Authorization") String token
@@ -44,6 +49,7 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
+    @ApiOperation(value = "기본정보 수정 API")
     @PutMapping("/{memberId}")
     public ResponseEntity<String> modifiedMemberProfile(
         @RequestHeader("Authorization") String token,

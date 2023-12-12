@@ -45,15 +45,14 @@ public class GroupMemberApplicationService {
         .orElseThrow(() -> new RuntimeException("신청하고자 하는 그룹이 존재하지 않습니다."));
     Member member = memberRepository.findByEmail(memberEmail)
         .orElseThrow(() -> new RuntimeException("멤버 정보가 존재하지 않습니다."));
-    Boolean exists = groupMemberRepository.existsByMember_MemberIdAndTripGroup_TripGroupId(
-        member.getMemberId(), tripGroupId);
+    Boolean exists = groupMemberRepository.exitsApplication(tripGroupId, member.getMemberId());
 
     if (tripGroup.getCurrentMemberNumber() >= tripGroup.getMaxMemberNumber()) {
       throw new CustomException(ErrorCode.MEMBER_COUNT_MAX);
     }
 
     if (exists) {
-      throw new RuntimeException("이미 신청한 그룹 입니다. 같은 그룹에 중복 신청할 수 없습니다.");
+      throw new RuntimeException("이미 신청 대기중인 그룹 입니다. 같은 그룹에 중복 신청할 수 없습니다.");
     } else {
       groupMemberRepository.save(GroupMember.from(tripGroup, member));
     }

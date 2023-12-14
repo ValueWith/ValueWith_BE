@@ -1,5 +1,7 @@
 package com.valuewith.tweaver.group.repository;
 
+import static com.valuewith.tweaver.groupMember.entity.QGroupMember.groupMember;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -132,6 +134,15 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
                 .and(qTripGroup.dueDate.eq(LocalDate.now().minusDays(1))))
             .execute();
 
+    }
+
+    @Override
+    public List<TripGroup> findChatRoomByMemberId(Long memberId) {
+        return queryFactory
+            .selectFrom(qTripGroup)
+            .where(qTripGroup.member.memberId.notIn(memberId)
+                .and(qTripGroup.isDeleted.eq(Boolean.FALSE)))
+            .fetch();
     }
 
 

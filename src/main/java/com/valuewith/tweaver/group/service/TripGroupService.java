@@ -13,6 +13,7 @@ import com.valuewith.tweaver.group.repository.TripGroupRepository;
 import com.valuewith.tweaver.groupMember.entity.GroupMember;
 import com.valuewith.tweaver.groupMember.repository.GroupMemberRepository;
 import com.valuewith.tweaver.member.entity.Member;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,5 +120,9 @@ public class TripGroupService {
     TripGroup foundTripGroup = tripGroupRepository.findById(tripGroupId)
         .orElseThrow(() -> new RuntimeException("삭제하려는 그룹이 존재하지 않습니다."));
     return foundTripGroup.getMember().equals(member);
+  }
+
+  public List<TripGroup> findChatRoomByMemberId(Long memberId) {
+    return tripGroupRepository.findChatRoomByMemberId(memberId);
   }
 }

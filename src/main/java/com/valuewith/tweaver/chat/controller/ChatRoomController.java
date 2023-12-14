@@ -5,6 +5,7 @@ import static com.valuewith.tweaver.constants.ErrorCode.NOT_A_MEMBER;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valuewith.tweaver.chat.dto.ChatRoomDto;
+import com.valuewith.tweaver.chat.dto.ChatRoomDto2;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.service.ChatMemberService;
 import com.valuewith.tweaver.chat.service.ChatRoomService;
@@ -46,34 +47,64 @@ public class ChatRoomController {
   private final MessageService messageService;
   private final ObjectMapper objectMapper;
 
+//  @GetMapping("/room")
+//  public ResponseEntity<List<ChatRoomDto>> findChatRooms(
+//      HttpServletRequest request) {
+//    String accessToken = tokenService.parseAccessToken(request);
+//    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(accessToken));
+//
+//    // 1. 그룹원인 경우
+//    List<ChatRoomDto> memberChat = groupMemberService.findApprovedGroupsByMemberId(
+//            member.getMemberId())
+//        .stream()
+//        .map(groupMember ->
+//            ChatRoomDto.from(groupMember.getChatRoom(),
+//                messageService.findAllByMessageList(groupMember.getChatRoom().getChatRoomId())))
+//        .collect(Collectors.toList());
+//
+//    // 2. 그룹장일 경우
+//    List<ChatRoomDto> leaderChat = tripGroupService.findMyTripGroupListByMemberId(
+//            member.getMemberId())
+//        .stream()
+//        .map(TripGroup::getTripGroupId)
+//        .map(chatRoomService::findByChatRoomId)
+//        .map(chatRoom ->
+//            ChatRoomDto.from(chatRoom,
+//                messageService.findAllByMessageList(chatRoom.getChatRoomId())))
+//        .collect(Collectors.toList());
+//
+//    // 3. 전부 통합
+//    List<ChatRoomDto> chatRoomList = ListUtils.union(memberChat, leaderChat);
+//
+//    return ResponseEntity.ok(chatRoomList);
+//  }
+
   @GetMapping("/room")
-  public ResponseEntity<List<ChatRoomDto>> findChatRooms(
+  public ResponseEntity<List<ChatRoomDto2>> getAllChatRooms(
       HttpServletRequest request) {
     String accessToken = tokenService.parseAccessToken(request);
     Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(accessToken));
 
     // 1. 그룹원인 경우
-    List<ChatRoomDto> memberChat = groupMemberService.findApprovedGroupsByMemberId(
-            member.getMemberId())
+    List<ChatRoomDto2> memberChat = groupMemberService.findChatRoomByMemberId(member.getMemberId())
         .stream()
         .map(groupMember ->
-            ChatRoomDto.from(groupMember.getChatRoom(),
-                messageService.findAllByMessageList(groupMember.getChatRoom().getChatRoomId())))
+            ChatRoomDto2.from(groupMember.getChatRoom(),
+                messageService.findLastMessage(groupMember.getChatRoom().getChatRoomId())))
         .collect(Collectors.toList());
 
     // 2. 그룹장일 경우
-    List<ChatRoomDto> leaderChat = tripGroupService.findMyTripGroupListByMemberId(
-            member.getMemberId())
+    List<ChatRoomDto2> leaderChat = tripGroupService.findChatRoomByMemberId(member.getMemberId())
         .stream()
         .map(TripGroup::getTripGroupId)
         .map(chatRoomService::findByChatRoomId)
         .map(chatRoom ->
-            ChatRoomDto.from(chatRoom,
-                messageService.findAllByMessageList(chatRoom.getChatRoomId())))
+            ChatRoomDto2.from(chatRoom,
+                messageService.findLastMessage(chatRoom.getChatRoomId())))
         .collect(Collectors.toList());
 
     // 3. 전부 통합
-    List<ChatRoomDto> chatRoomList = ListUtils.union(memberChat, leaderChat);
+    List<ChatRoomDto2> chatRoomList = ListUtils.union(memberChat, leaderChat);
 
     return ResponseEntity.ok(chatRoomList);
   }

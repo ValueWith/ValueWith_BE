@@ -20,4 +20,6 @@ public interface TripGroupRepositoryCustom {
      * 매일 오전 12시 마감 처리
      */
     void updateTripGroupStatusToClose();
+
+  List<TripGroup> findChatRoomByMemberId(Long memberId);
 }

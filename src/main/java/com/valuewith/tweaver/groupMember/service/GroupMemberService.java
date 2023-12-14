@@ -7,6 +7,7 @@ import com.valuewith.tweaver.groupMember.entity.GroupMember;
 import com.valuewith.tweaver.groupMember.repository.GroupMemberRepository;
 import com.valuewith.tweaver.member.entity.Member;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,5 +39,9 @@ public class GroupMemberService {
   public GroupMember findGroupMemberByMemberIdAndGroupId(Long memberId, Long tripGroupId) {
     return groupMemberRepository.findGroupMemberByMember_MemberIdAndTripGroup_TripGroupId(
         memberId, tripGroupId);
+  }
+
+  public List<GroupMember> findChatRoomByMemberId(Long memberId) {
+    return groupMemberRepository.findChatRoomByMemberId(memberId);
   }
 }

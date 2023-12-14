@@ -78,4 +78,14 @@ public class GroupMemberRepositoryCustomImpl implements GroupMemberRepositoryCus
                 .and(groupMember.approvedStatus.eq(ApprovedStatus.PENDING)))
             .fetchOne());
     }
+
+    @Override
+    public List<GroupMember> findChatRoomByMemberId(Long memberId) {
+        return queryFactory
+            .selectFrom(groupMember)
+            .where(groupMember.member.memberId.notIn(memberId)
+                .and(groupMember.approvedStatus.eq(ApprovedStatus.APPROVED))
+                .and(groupMember.isDeleted.eq(Boolean.FALSE)))
+            .fetch();
+    }
 }

@@ -1,7 +1,11 @@
 # ValueWith_BE
 spring을 활용한 여행 도우미 프로젝트입니다.
+- 전체: https://github.com/ValueWith
 
 ## 디렉토리 구조
+<details>
+<summary>디렉토리 구조 접기/펼치기</summary>
+<div markdown="1">
 
 ```shell
 .
@@ -248,3 +252,6 @@ spring을 활용한 여행 도우미 프로젝트입니다.
 
 
 ```
+
+</div>
+</details>

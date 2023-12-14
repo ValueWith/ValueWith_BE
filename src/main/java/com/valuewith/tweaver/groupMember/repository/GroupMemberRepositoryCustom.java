@@ -20,4 +20,6 @@ public interface GroupMemberRepositoryCustom {
     Optional<GroupMember> findPendingMembersByTripGroupIdAndMemberId(Long tripGroupId, Long memberId);
 
     List<GroupMember> findChatRoomByMemberId(Long memberId);
+
+    Boolean exitsApplication(Long tripGroupId, Long memberId);
 }

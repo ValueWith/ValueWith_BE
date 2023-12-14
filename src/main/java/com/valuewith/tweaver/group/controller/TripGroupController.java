@@ -4,6 +4,7 @@ import com.valuewith.tweaver.alert.service.AlertService;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.service.ChatRoomService;
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.config.SwaggerConfig;
 import com.valuewith.tweaver.constants.AlertContent;
 import com.valuewith.tweaver.group.dto.TripGroupRequestDto;
 import com.valuewith.tweaver.group.entity.TripGroup;
@@ -13,6 +14,7 @@ import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
 import com.valuewith.tweaver.message.service.MessageService;
 import com.valuewith.tweaver.place.service.PlaceService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Api(tags = {SwaggerConfig.TRIP_GROUP_TAG})
 @Slf4j
 @RestController
 @RequiredArgsConstructor

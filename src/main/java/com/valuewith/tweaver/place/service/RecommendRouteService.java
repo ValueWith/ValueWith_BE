@@ -120,7 +120,7 @@ public class RecommendRouteService {
       // JSON 형식의 요청 데이터 문자열 생성
       String requestBody = jsonNode.toString();
 
-      log.info(requestBody.toString());
+      //log.info(requestBody.toString());
 
       // HTTP 클라이언트 생성
       HttpClient httpClient = HttpClient.newHttpClient();
@@ -138,8 +138,8 @@ public class RecommendRouteService {
           HttpResponse.BodyHandlers.ofString());
 
       // 응답 출력
-      System.out.println("Response Code: " + response.statusCode());
-      System.out.println("Response Body: " + response.body());
+//      System.out.println("Response Code: " + response.statusCode());
+//      System.out.println("Response Body: " + response.body());
 
       // 응답 배열에 정리
       objectMapper = new ObjectMapper();

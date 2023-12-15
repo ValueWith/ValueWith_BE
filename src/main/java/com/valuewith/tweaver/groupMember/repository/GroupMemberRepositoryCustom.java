@@ -2,6 +2,7 @@ package com.valuewith.tweaver.groupMember.repository;
 
 import com.valuewith.tweaver.constants.ApprovedStatus;
 import com.valuewith.tweaver.groupMember.entity.GroupMember;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,8 @@ public interface GroupMemberRepositoryCustom {
     GroupMember findApprovedMemberByTripGroupIdAndMemberId(Long tripGroupId, Long memberId);
 
     Optional<GroupMember> findPendingMembersByTripGroupIdAndMemberId(Long tripGroupId, Long memberId);
+
+    List<GroupMember> findChatRoomByMemberId(Long memberId);
 
     Boolean exitsApplication(Long tripGroupId, Long memberId);
 }

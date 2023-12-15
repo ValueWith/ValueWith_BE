@@ -4,6 +4,7 @@ package com.valuewith.tweaver.chat.controller;
 import static com.valuewith.tweaver.constants.ErrorCode.NOT_A_MEMBER;
 
 import com.valuewith.tweaver.chat.dto.ChatRoomDto;
+import com.valuewith.tweaver.chat.dto.ChatRoomDto2;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.service.ChatMemberService;
 import com.valuewith.tweaver.chat.service.ChatRoomService;
@@ -17,6 +18,7 @@ import com.valuewith.tweaver.groupMember.entity.GroupMember;
 import com.valuewith.tweaver.groupMember.service.GroupMemberService;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
+import com.valuewith.tweaver.message.dto.MessageResponseDto;
 import com.valuewith.tweaver.message.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,12 +29,16 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.ListUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,67 +56,119 @@ public class ChatRoomController {
   private final TokenService tokenService;
   private final MessageService messageService;
 
+//  @ApiOperation(
+//      value = "채팅방 조회",
+//      notes = "그룹원, 그룹장 모두 조회합니다."
+//  )
+//  @GetMapping("/room")
+//  public ResponseEntity<List<ChatRoomDto>> findChatRooms(
+//      HttpServletRequest request) {
+//    String accessToken = tokenService.parseAccessToken(request);
+//    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(accessToken));
+//
+//    // 1. 그룹원인 경우
+//    List<ChatRoomDto> memberChat = groupMemberService.findApprovedGroupsByMemberId(
+//            member.getMemberId())
+//        .stream()
+//        .map(groupMember ->
+//            ChatRoomDto.from(groupMember.getChatRoom(),
+//                messageService.findAllByMessageList(groupMember.getChatRoom().getChatRoomId())))
+//        .collect(Collectors.toList());
+//
+//    // 2. 그룹장일 경우
+//    List<ChatRoomDto> leaderChat = tripGroupService.findMyTripGroupListByMemberId(
+//            member.getMemberId())
+//        .stream()
+//        .map(TripGroup::getTripGroupId)
+//        .map(chatRoomService::findByChatRoomId)
+//        .map(chatRoom ->
+//            ChatRoomDto.from(chatRoom,
+//                messageService.findAllByMessageList(chatRoom.getChatRoomId())))
+//        .collect(Collectors.toList());
+//
+//    // 3. 전부 통합
+//    List<ChatRoomDto> chatRoomList = ListUtils.union(memberChat, leaderChat);
+//
+//    return ResponseEntity.ok(chatRoomList);
+//  }
+
   @ApiOperation(
       value = "채팅방 조회",
       notes = "그룹원, 그룹장 모두 조회합니다."
   )
   @GetMapping("/room")
-  public ResponseEntity<List<ChatRoomDto>> findChatRooms(
+  public ResponseEntity<List<ChatRoomDto2>> getAllChatRooms(
       HttpServletRequest request) {
     String accessToken = tokenService.parseAccessToken(request);
     Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(accessToken));
 
     // 1. 그룹원인 경우
-    List<ChatRoomDto> memberChat = groupMemberService.findApprovedGroupsByMemberId(
-            member.getMemberId())
+    List<ChatRoomDto2> memberChat = groupMemberService.findChatRoomByMemberId(member.getMemberId())
         .stream()
         .map(groupMember ->
-            ChatRoomDto.from(groupMember.getChatRoom(),
-                messageService.findAllByMessageList(groupMember.getChatRoom().getChatRoomId())))
+            ChatRoomDto2.from(groupMember.getChatRoom(),
+                messageService.findLastMessage(groupMember.getChatRoom().getChatRoomId())))
         .collect(Collectors.toList());
 
     // 2. 그룹장일 경우
-    List<ChatRoomDto> leaderChat = tripGroupService.findMyTripGroupListByMemberId(
-            member.getMemberId())
+    List<ChatRoomDto2> leaderChat = tripGroupService.findChatRoomByMemberId(member.getMemberId())
         .stream()
         .map(TripGroup::getTripGroupId)
         .map(chatRoomService::findByChatRoomId)
         .map(chatRoom ->
-            ChatRoomDto.from(chatRoom,
-                messageService.findAllByMessageList(chatRoom.getChatRoomId())))
+            ChatRoomDto2.from(chatRoom,
+                messageService.findLastMessage(chatRoom.getChatRoomId())))
         .collect(Collectors.toList());
 
     // 3. 전부 통합
-    List<ChatRoomDto> chatRoomList = ListUtils.union(memberChat, leaderChat);
+    List<ChatRoomDto2> chatRoomList = ListUtils.union(memberChat, leaderChat);
 
     return ResponseEntity.ok(chatRoomList);
   }
 
+//  @ApiOperation(
+//      value = "채팅방 조회",
+//      notes = "그룹원, 그룹장 모두 조회합니다."
+//  )
+//  @ApiResponses(value = {
+//      @ApiResponse(code = 401, message = "멤버가 아닌 경우 발생합니다.")
+//  })
+//  @PostMapping("/room/{chatRoomId}")
+//  public ResponseEntity<String> enterChatRoom(
+//      @AuthenticationPrincipal PrincipalDetails principalDetails,
+//      @PathVariable Long chatRoomId) {
+//
+//    // 팀장일때는 TrpiGroupId로 찾아야함!!
+//    ChatRoom chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
+//    Long memberId = memberService.findMemberByEmail(principalDetails.getUsername()).getMemberId();
+//    Long tripGroupId = chatRoom.getTripGroup().getTripGroupId();
+//
+//    if (!groupMemberService.isGroupMember(memberId, tripGroupId)) {
+//      throw new CustomException(NOT_A_MEMBER);
+//    }
+//
+//    GroupMember groupMember = groupMemberService.findGroupMemberByMemberIdAndGroupId(
+//        memberId, tripGroupId);
+//
+//    return ResponseEntity.ok(chatMemberService.enterChatRoom(chatRoom, groupMember));
+//  }
+
   @ApiOperation(
-      value = "채팅방 조회",
-      notes = "그룹원, 그룹장 모두 조회합니다."
+      value = "채팅방 입장",
+      notes = "채팅방의 메세지와 멤버 정보를 함께 제공"
   )
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "멤버가 아닌 경우 발생합니다.")
+      //@ApiResponse(code = 401, message = "멤버가 아닌 경우 발생합니다.")
   })
-  @PostMapping("/room/{chatRoomId}")
-  public ResponseEntity<String> enterChatRoom(
-      @AuthenticationPrincipal PrincipalDetails principalDetails,
-      @PathVariable Long chatRoomId) {
+  @GetMapping("/room/{chatRoomId}")
+  public ResponseEntity<Slice<MessageResponseDto>> enterChatRoom(
+      @RequestHeader("Authorization") String token,
+      @PathVariable Long chatRoomId,
+      @PageableDefault(size = 30) Pageable pageable) {
 
-    // 팀장일때는 TrpiGroupId로 찾아야함!!
-    ChatRoom chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
-    Long memberId = memberService.findMemberByEmail(principalDetails.getUsername()).getMemberId();
-    Long tripGroupId = chatRoom.getTripGroup().getTripGroupId();
+    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
 
-    if (!groupMemberService.isGroupMember(memberId, tripGroupId)) {
-      throw new CustomException(NOT_A_MEMBER);
-    }
-
-    GroupMember groupMember = groupMemberService.findGroupMemberByMemberIdAndGroupId(
-        memberId, tripGroupId);
-
-    return ResponseEntity.ok(chatMemberService.enterChatRoom(chatRoom, groupMember));
+    return ResponseEntity.ok(chatMemberService.enterChatRoom(chatRoomId, pageable));
   }
 
   @ApiOperation(

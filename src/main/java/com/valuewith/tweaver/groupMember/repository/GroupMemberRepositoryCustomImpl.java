@@ -80,6 +80,15 @@ public class GroupMemberRepositoryCustomImpl implements GroupMemberRepositoryCus
     }
 
     @Override
+    public List<GroupMember> findChatRoomByMemberId(Long memberId) {
+        return queryFactory
+            .selectFrom(groupMember)
+            .where(groupMember.member.memberId.notIn(memberId)
+                .and(groupMember.approvedStatus.eq(ApprovedStatus.APPROVED))
+                .and(groupMember.isDeleted.eq(Boolean.FALSE)))
+            .fetch();
+    }
+    @Override
     public Boolean exitsApplication(Long tripGroupId, Long memberId) {
         Integer fetchOne = queryFactory.selectOne()
             .from(groupMember)

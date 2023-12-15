@@ -7,6 +7,7 @@ import com.valuewith.tweaver.message.dto.MessageDto;
 import com.valuewith.tweaver.message.entity.Message;
 import com.valuewith.tweaver.message.repository.MessageRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,14 @@ public class MessageService {
         .stream()
         .map(MessageDto::from)
         .collect(Collectors.toList());
+  }
+
+  public MessageDto findLastMessage(Long chatRoomId) {
+    Optional<Message> lastByChatRoom = messageRepository.findLastByChatRoom(chatRoomId);
+    if(lastByChatRoom.isEmpty()) {
+      // TODO: 메세지가 없는 채팅방일 경우 어떻게 할지 정해야 함.
+      return null;
+    }
+    return MessageDto.from(lastByChatRoom.get());
   }
 }

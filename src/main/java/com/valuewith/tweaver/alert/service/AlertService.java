@@ -84,7 +84,7 @@ public class AlertService {
     try {
       emitter.send(SseEmitter.event()
           .id(eventId)
-          .name("sse")
+          .name("message")
           .data(data));
       log.info("알림 전송 완료");
     } catch (IOException exception) {

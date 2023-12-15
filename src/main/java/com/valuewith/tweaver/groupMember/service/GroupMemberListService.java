@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.groupMember.service;
 
+import com.valuewith.tweaver.chat.service.ChatMemberService;
 import com.valuewith.tweaver.constants.ApprovedStatus;
 import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.repository.TripGroupRepository;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class GroupMemberListService {
+
+    private final ChatMemberService chatMemberService;
 
     private final MemberRepository memberRepository;
     private final TripGroupRepository tripGroupRepository;
@@ -58,6 +61,7 @@ public class GroupMemberListService {
     }
 
     //TODO - 채팅도 이때 함께 나가지는게 좋을지 고민
+    //DONE - 채팅도 함께 나가도록 로직 추가
     @Transactional
     public void leftMemberFromTripGroup(String memberEmail, Long tripGroupId) {
         Member member = memberRepository.findByEmail(memberEmail)
@@ -70,8 +74,8 @@ public class GroupMemberListService {
             tripGroup.getTripGroupId(), member.getMemberId()
         );
 
-        // 채팅방 아웃 예시
-        // chatRoomService.removeMemberFromChatRoom(member, groupMember.getChatRoom());
+        // 채팅방 아웃
+        chatMemberService.exitChatRoom(groupMember.getChatRoom().getChatRoomId(), member.getMemberId());
         groupMember.leaveApplication(ApprovedStatus.LEFT);
         groupMemberRepository.save(groupMember);
 
@@ -98,6 +102,9 @@ public class GroupMemberListService {
             .orElseThrow(() -> new EntityNotFoundException("등록된 그룹멤버 정보가 없습니다." + groupMemberId));
         groupMember.leaveApplication(ApprovedStatus.BANNED);
         groupMemberRepository.save(groupMember);
+
+        // 채팅방 아웃
+        chatMemberService.exitChatRoom(groupMember.getChatRoom().getChatRoomId(), member.getMemberId());
 
         // 현재 멤버 수 감소
         tripGroup.decrementCurrentMemberNumber();

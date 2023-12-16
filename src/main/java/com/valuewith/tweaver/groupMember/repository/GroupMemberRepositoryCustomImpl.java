@@ -83,7 +83,7 @@ public class GroupMemberRepositoryCustomImpl implements GroupMemberRepositoryCus
     public List<GroupMember> findChatRoomByMemberId(Long memberId) {
         return queryFactory
             .selectFrom(groupMember)
-            .where(groupMember.member.memberId.notIn(memberId)
+            .where(groupMember.member.memberId.eq(memberId)
                 .and(groupMember.approvedStatus.eq(ApprovedStatus.APPROVED))
                 .and(groupMember.isDeleted.eq(Boolean.FALSE)))
             .fetch();

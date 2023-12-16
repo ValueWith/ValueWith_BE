@@ -1,7 +1,5 @@
 package com.valuewith.tweaver.group.repository;
 
-import static com.valuewith.tweaver.groupMember.entity.QGroupMember.groupMember;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -140,7 +138,7 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
     public List<TripGroup> findChatRoomByMemberId(Long memberId) {
         return queryFactory
             .selectFrom(qTripGroup)
-            .where(qTripGroup.member.memberId.notIn(memberId)
+            .where(qTripGroup.member.memberId.eq(memberId)
                 .and(qTripGroup.isDeleted.eq(Boolean.FALSE)))
             .fetch();
     }

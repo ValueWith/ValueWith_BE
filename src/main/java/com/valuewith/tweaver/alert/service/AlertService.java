@@ -20,13 +20,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class AlertService {
   private static final Long DEFAULT_TIMEOUT = 120L * 1000 * 60; // SSE 유효시간
   private final EmitterRepository emitterRepository;
   private final AlertRepository alertRepository;
-  private final TripGroupRepository tripGroupRepository;
 
   public SseEmitter subscribe(Long memberId, String lastEventId) {
 
@@ -57,11 +55,10 @@ public class AlertService {
 
   @Transactional
   // 알림 보낼 로직에 send 메서드 호출하면 됨
-  public void send(AlertRequestDto alertRequestDto) {
-    Alert saveAlert = alertRepository.save(Alert.from(alertRequestDto));
+  public void send(Alert saveAlert) {
 
     // 받을 사람 id
-    Long memberId = alertRequestDto.getMember().getMemberId();
+    Long memberId = saveAlert.getMember().getMemberId();
     String eventId = memberId + "_" + System.currentTimeMillis(); // 데이터 유실 시점 파악 위함
 
     // 유저의 모든 SseEmitter 가져옴
@@ -117,6 +114,7 @@ public class AlertService {
   }
 
   // 읽은 알람 isChecked true로 설정
+  @Transactional
   public Long check(Long memberId, Long alertId) {
     Alert alert = alertRepository.findById(alertId)
         .orElseThrow(() -> new RuntimeException("확인하고자 하는 알람이 존재하지 않습니다."));
@@ -127,11 +125,13 @@ public class AlertService {
   }
 
   // 모든 알람 isChecked true로 설정
+  @Transactional
   public void allCheck(Long memberId) {
     alertRepository.checkAllByMemberId(memberId);
   }
 
   // 삭제한 알람은 삭제시키기
+  @Transactional
   public Long delete(Long memberId, Long alertId) {
     Alert alert = alertRepository.findByAlertIdAndIsDeleted(alertId, false)
         .orElseThrow(() -> new RuntimeException("삭제하고자 하는 알람이 존재하지 않습니다."));
@@ -145,10 +145,12 @@ public class AlertService {
     return alertRepository.getAlertCountByMemberId(memberId);
   }
 
+  @Transactional
   public void deleteAlertByTripGroupId(Long tripGroupId) {
     alertRepository.deleteByTripGroupId(tripGroupId);
   }
 
+  @Transactional
   public void modifiedAlertGroupName(TripGroup tripGroup) {
     alertRepository.modifiedGroupNameByTripGroupId(tripGroup.getTripGroupId(), tripGroup.getName());
   }

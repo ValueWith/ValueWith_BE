@@ -95,12 +95,12 @@ public class TripGroupController {
     chatRoomService.deleteChatRoom(tripGroupId);
     // 3.일정 삭제
     placeService.deletePlaces(tripGroupId);
-    // 4.그룹 멤버 삭제
-    groupMemberService.deleteGroupMember(tripGroupId);
-    // 5.알람 삭제
+    // 4.알람 삭제
     alertService.deleteAlertByTripGroupId(tripGroupId);
-    // 6.그룹 멤버에게 그룹 삭제에 대한 알림
+    // 5.그룹 멤버에게 그룹 삭제에 대한 알림
     tripGroupService.sendTripGroupAlert(tripGroupId, AlertContent.DELETED_GROUP);
+    // 6.그룹 멤버 삭제
+    groupMemberService.deleteGroupMember(tripGroupId);
     // 7.그룹 삭제
     tripGroupService.deleteTripGroup(tripGroupId);
 

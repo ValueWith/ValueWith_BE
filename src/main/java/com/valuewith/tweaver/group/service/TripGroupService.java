@@ -1,6 +1,8 @@
 package com.valuewith.tweaver.group.service;
 
 import com.valuewith.tweaver.alert.dto.AlertRequestDto;
+import com.valuewith.tweaver.alert.entity.Alert;
+import com.valuewith.tweaver.alert.repository.AlertRepository;
 import com.valuewith.tweaver.constants.AlertContent;
 import com.valuewith.tweaver.constants.GroupStatus;
 import com.valuewith.tweaver.constants.ImageType;
@@ -34,6 +36,7 @@ public class TripGroupService {
   private final TripGroupRepository tripGroupRepository;
   private final DefaultImageRepository defaultImageRepository;
   private final GroupMemberRepository groupMemberRepository;
+  private final AlertRepository alertRepository;
 
   public TripGroup createTripGroup(TripGroupRequestDto tripGroupRequestDto, MultipartFile file, Member member) {
 
@@ -99,13 +102,18 @@ public class TripGroupService {
     TripGroup tripGroup = tripGroupRepository.findByTripGroupId(tripGroupId)
             .orElseThrow(() -> new RuntimeException("그룹 정보가 존재하지 않습니다."));
 
+
     groupMembers.stream().forEach(groupMember -> {
-      eventPublisher.publishEvent(AlertRequestDto.builder()
-          .groupId(tripGroupId)
-          .groupName(tripGroup.getName())
-          .member(groupMember.getMember())
-          .content(alertContent)
-          .build());
+      // 알람 저장
+      Alert saveAlert = alertRepository.save(
+          Alert.from(AlertRequestDto.builder()
+              .groupId(tripGroupId)
+              .groupName(tripGroup.getName())
+              .member(groupMember.getMember())
+              .content(alertContent)
+              .build()));
+      // 실시간 알람 보내기
+      eventPublisher.publishEvent(saveAlert);
     });
 
 

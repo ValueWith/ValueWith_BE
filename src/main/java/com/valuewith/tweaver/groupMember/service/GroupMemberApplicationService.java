@@ -1,6 +1,8 @@
 package com.valuewith.tweaver.groupMember.service;
 
 import com.valuewith.tweaver.alert.dto.AlertRequestDto;
+import com.valuewith.tweaver.alert.entity.Alert;
+import com.valuewith.tweaver.alert.repository.AlertRepository;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.chat.repository.ChatRoomRepository;
 import com.valuewith.tweaver.chat.service.ChatRoomService;
@@ -34,6 +36,8 @@ public class GroupMemberApplicationService {
   private final ChatRoomRepository chatRoomRepository;
   private final MemberRepository memberRepository;
   private final TripGroupRepository tripGroupRepository;
+  private final AlertRepository alertRepository;
+
   private final MessageService messageService;
   private final SimpMessageSendingOperations simpMessageSendingOperations;
   private final MemberService memberService;
@@ -57,13 +61,17 @@ public class GroupMemberApplicationService {
       groupMemberRepository.save(GroupMember.from(tripGroup, member));
     }
 
-    // 신청이 왔을 때 알람 보내기
-    eventPublisher.publishEvent(AlertRequestDto.builder()
+    // 신청이 왔을 때
+    // 알람 저장
+    Alert saveAlert = alertRepository.save(
+        Alert.from(AlertRequestDto.builder()
             .groupId(tripGroupId)
             .groupName(tripGroup.getName())
             .member(tripGroup.getMember())
             .content(AlertContent.NEW_APPLICATION)
-            .build());
+            .build()));
+    // 실시간 알람 보내기
+    eventPublisher.publishEvent(saveAlert);
   }
 
   public void deleteApplication(Long tripGroupId, String memberEmail) {
@@ -83,13 +91,17 @@ public class GroupMemberApplicationService {
         .orElseThrow(() -> new RuntimeException("신청이 존재하지 않습니다."));
     foundGroupMember.rejectApplication();
 
-    // 신청이 거절 되었을 때 알람 보내기
-    eventPublisher.publishEvent(AlertRequestDto.builder()
+    // 신청이 거절 되었을 때
+    // 알람 저장
+    Alert saveAlert = alertRepository.save(
+        Alert.from(AlertRequestDto.builder()
         .groupId(foundGroupMember.getTripGroup().getTripGroupId())
         .groupName(foundGroupMember.getTripGroup().getName())
         .member(foundGroupMember.getMember())
         .content(AlertContent.APPLICATION_REJECT)
-        .build());
+        .build()));
+    // 실시간 알람 보내기
+    eventPublisher.publishEvent(saveAlert);
   }
 
   public void confirmApplication(Long groupMemberId) {
@@ -106,13 +118,17 @@ public class GroupMemberApplicationService {
     tripGroup.incrementCurrentMemberNumber();
     tripGroupRepository.save(tripGroup); // 변경된 상태 저장
 
-    // 신청이 승인 되었을 때 알람 보내기
-    eventPublisher.publishEvent(AlertRequestDto.builder()
-        .groupId(foundGroupMember.getTripGroup().getTripGroupId())
-        .groupName(foundGroupMember.getTripGroup().getName())
-        .member(foundGroupMember.getMember())
-        .content(AlertContent.APPLICATION_APPLY)
-        .build());
+    // 신청이 승인 되었을 때
+    // 알람 저장
+    Alert saveAlert = alertRepository.save(
+        Alert.from(AlertRequestDto.builder()
+            .groupId(foundGroupMember.getTripGroup().getTripGroupId())
+            .groupName(foundGroupMember.getTripGroup().getName())
+            .member(foundGroupMember.getMember())
+            .content(AlertContent.APPLICATION_APPLY)
+            .build()));
+    // 실시간 알람 보내기
+    eventPublisher.publishEvent(saveAlert);
 
     // 승인된 그룹에 다른 멤버들에게 추가 그룹원이 있다는 알람 보내기
     List<GroupMember> groupMembers
@@ -120,14 +136,17 @@ public class GroupMemberApplicationService {
         foundGroupMember.getTripGroup().getTripGroupId(),
         foundGroupMember.getMember().getMemberId());
     groupMembers.stream().forEach(groupMember -> {
-      eventPublisher.publishEvent(AlertRequestDto.builder()
-          .groupId(groupMember.getTripGroup().getTripGroupId())
-          .groupName(foundGroupMember.getTripGroup().getName())
-          .member(groupMember.getMember())
-          .content(AlertContent.ADD_MEMBER)
-          .build());
-        }
-    );
+      // 알람 저장
+      Alert saveGroupMemberAlert = alertRepository.save(
+          Alert.from(AlertRequestDto.builder()
+              .groupId(groupMember.getTripGroup().getTripGroupId())
+              .groupName(foundGroupMember.getTripGroup().getName())
+              .member(groupMember.getMember())
+              .content(AlertContent.ADD_MEMBER)
+              .build()));
+      // 실시간 알람 보내기
+      eventPublisher.publishEvent(saveGroupMemberAlert);
+    });
 
     // 승인된 그룹에게 채팅 보내기
     sendHelloMessage(chatRoom, foundGroupMember);

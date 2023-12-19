@@ -53,7 +53,6 @@ public class AlertService {
     return emitter;
   }
 
-  @Transactional
   // 알림 보낼 로직에 send 메서드 호출하면 됨
   public void send(Alert saveAlert) {
 

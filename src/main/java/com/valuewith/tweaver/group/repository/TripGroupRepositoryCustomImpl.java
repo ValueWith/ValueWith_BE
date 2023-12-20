@@ -64,8 +64,7 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
 
         long total = queryFactory
             .selectFrom(qTripGroup)
-            .where(qTripGroup.member.memberId.eq(memberId),
-                qTripGroup.status.eq(GroupStatus.OPEN))
+            .where(qTripGroup.member.memberId.eq(memberId))
             .fetchCount();
 
         return new PageImpl<>(tripGroups, pageable, total);
@@ -78,8 +77,7 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
             .join(qGroupMember)
             .on(qGroupMember.tripGroup.eq(qTripGroup))
             .where(qGroupMember.member.memberId.eq(memberId)
-                .and(qGroupMember.approvedStatus.eq(ApprovedStatus.APPROVED))
-                .and(qTripGroup.status.eq(GroupStatus.OPEN)))
+                .and(qGroupMember.approvedStatus.eq(ApprovedStatus.APPROVED)))
             .orderBy(qTripGroup.createdDateTime.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -90,8 +88,7 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
             .join(qGroupMember)
             .on(qGroupMember.tripGroup.eq(qTripGroup))
             .where(qGroupMember.member.memberId.eq(memberId)
-                .and(qGroupMember.approvedStatus.eq(ApprovedStatus.APPROVED))
-                .and(qTripGroup.status.eq(GroupStatus.OPEN)))
+                .and(qGroupMember.approvedStatus.eq(ApprovedStatus.APPROVED)))
             .fetchCount();
 
         return PageableExecutionUtils.getPage(tripGroups, pageable, () -> total);

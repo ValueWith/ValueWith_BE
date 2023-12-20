@@ -5,6 +5,7 @@ import com.valuewith.tweaver.chat.service.ChatRoomService;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
 import com.valuewith.tweaver.message.dto.MessageDto;
+import com.valuewith.tweaver.message.dto.MessageResquestDto;
 import com.valuewith.tweaver.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -24,10 +25,10 @@ public class MessageController {
 
 
   @MessageMapping("/message/{chatRoomId}")
-  public void sendMessage(@Payload MessageDto message,
+  public void sendMessage(@Payload MessageResquestDto message,
       @DestinationVariable("chatRoomId") Long chatRoomId) {
     ChatRoom chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
-    Member sender = memberService.findMemberByMemberId(message.getMemberIdDto().getMemberId());
+    Member sender = memberService.findMemberByMemberId(message.getMemberId());
 
     MessageDto newMessage = messageService.createMessage(chatRoom, sender, message.getContent());
 

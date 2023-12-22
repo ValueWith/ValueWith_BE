@@ -39,9 +39,9 @@ public class AlertController {
   public ResponseEntity<SseEmitter> subscribe(
       @RequestHeader("Authorization") String token,
       @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
+    //Member member = memberService.findMemberByEmail();
     // 서비스를 통해 생성된 SseEmitter를 반환
-    return ResponseEntity.ok(alertService.subscribe(member.getMemberId(), lastEventId));
+    return ResponseEntity.ok(alertService.subscribe(tokenService.getMemberId(token), lastEventId));
   }
 
   // 내 알림 목록 조회

@@ -34,7 +34,7 @@ public class SigninSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         () -> new UsernameNotFoundException(email + "는(은) 없는 회원입니다."));
     String memberEmail = member.getEmail();
 
-    String accessToken = tokenService.createAccessToken(memberEmail);
+    String accessToken = tokenService.createAccessToken(memberEmail, member.getMemberId());
     String refreshToken = tokenService.createRefreshToken();
 
     // response header에 토큰 추가

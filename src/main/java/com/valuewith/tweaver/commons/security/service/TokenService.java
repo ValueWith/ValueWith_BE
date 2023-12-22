@@ -32,6 +32,7 @@ public class TokenService {
   private static final String ACCESS_SUBJECT = "Access";
   private static final String REFRESH_SUBJECT = "Refresh";
   private static final String CLAIM_EMAIL = "email";
+  private static final String CLAIM_MEMBER_ID = "memberId";
   private static final String BEARER = "Bearer ";
 
   private final String accessHeader = "Authorization";
@@ -46,9 +47,10 @@ public class TokenService {
    * Access 토큰을 생성합니다. 페이로드에 들어갈 기본적인 정보는 다음과 같습니다. 1. subject: Access 2. expiration: 1시간 3. claim:
    * email 변경사항 있을시에 claims에 put(클레임 이름, 값) 형식으로 추가해주세요. 클레임 이름은 상수로 추가해주세요. (파싱에서 사용)
    */
-  public String createAccessToken(String email) {
+  public String createAccessToken(String email, Long memberId) {
     Claims claims = Jwts.claims().setSubject(ACCESS_SUBJECT);
     claims.put(CLAIM_EMAIL, email);
+    claims.put(CLAIM_MEMBER_ID, memberId);
 
     Date now = new Date();
     Date expiredDate = new Date(now.getTime() + ACCESS_TOKEN_VALID_TIME);
@@ -86,6 +88,21 @@ public class TokenService {
         token = token.replace(BEARER, "");
       }
       return this.parseClaims(token).get(CLAIM_EMAIL).toString();
+    } catch (Exception e) {
+      System.out.println("들어온 token: " + token);
+      throw new CustomException(INVALID_JWT);
+    }
+  }
+
+  /**
+   * 토큰의 멤버 아이디 정보를 가져옵니다.
+   */
+  public Long getMemberId(String token) {
+    try {
+      if (StringUtils.hasText(token) && token.startsWith(BEARER)) {
+        token = token.replace(BEARER, "");
+      }
+      return Long.parseLong(this.parseClaims(token).get(CLAIM_MEMBER_ID).toString());
     } catch (Exception e) {
       System.out.println("들어온 token: " + token);
       throw new CustomException(INVALID_JWT);

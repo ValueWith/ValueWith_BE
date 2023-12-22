@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           String newRefreshToken = reissueRefreshToken(member);
           tokenService.sendAccessTokenAndRefreshToken(
               response,
-              tokenService.createAccessToken(member.getEmail()),
+              tokenService.createAccessToken(member.getEmail(), member.getMemberId()),
               newRefreshToken);
         }
     );

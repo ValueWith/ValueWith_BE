@@ -1,6 +1,7 @@
 # ValueWith_BE
 spring을 활용한 여행 도우미 프로젝트입니다.
-- 전체: https://github.com/ValueWith
+- 전체 구조: https://github.com/ValueWith
+- API 문서(swagger): https://tweaver.site/swagger-ui.html
 
 ## 디렉토리 구조
 <details>

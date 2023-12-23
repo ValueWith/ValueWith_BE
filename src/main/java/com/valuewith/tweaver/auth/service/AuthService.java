@@ -92,7 +92,7 @@ public class AuthService {
       return null;
     }
     String newRefreshToken = reissueRefreshToken(member.get());
-    String newAccessToken = tokenService.createAccessToken(member.get().getEmail());
+    String newAccessToken = tokenService.createAccessToken(member.get().getEmail(), member.get().getMemberId());
 
     tokenService.sendAccessToken(response, newAccessToken);
     tokenService.sendAccessTokenAndRefreshToken(response, newAccessToken, newRefreshToken);

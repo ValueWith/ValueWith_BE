@@ -39,19 +39,18 @@ public class AlertController {
   public ResponseEntity<SseEmitter> subscribe(
       @RequestHeader("Authorization") String token,
       @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
     // 서비스를 통해 생성된 SseEmitter를 반환
-    return ResponseEntity.ok(alertService.subscribe(member.getMemberId(), lastEventId));
+    return ResponseEntity.ok(alertService.subscribe(tokenService.getMemberId(token), lastEventId));
   }
 
   // 내 알림 목록 조회
   @ApiOperation(value = "내 알림목록 조회 API")
   @GetMapping
-  public ResponseEntity<Slice<AlertResponseDto>> alerts(@RequestHeader("Authorization") String token,
+  public ResponseEntity<Slice<AlertResponseDto>> alerts(
+      @RequestHeader("Authorization") String token,
       @PageableDefault(size = 20) Pageable pageable) {
-    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
 
-    return ResponseEntity.ok(alertService.getAlerts(member.getMemberId(), pageable));
+    return ResponseEntity.ok(alertService.getAlerts(tokenService.getMemberId(token), pageable));
   }
 
   /**
@@ -64,8 +63,7 @@ public class AlertController {
       @PathVariable("alertId") Long alarmId,
       @RequestHeader("Authorization") String token
   ) {
-    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
-    Long alertCnt = alertService.check(member.getMemberId(), alarmId);
+    Long alertCnt = alertService.check(tokenService.getMemberId(token), alarmId);
     return ResponseEntity.ok(alertCnt);
   }
 
@@ -77,8 +75,7 @@ public class AlertController {
   public ResponseEntity<String> allCheck(
       @RequestHeader("Authorization") String token
   ) {
-    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
-    alertService.allCheck(member.getMemberId());
+    alertService.allCheck(tokenService.getMemberId(token));
     return ResponseEntity.ok("ok");
   }
 
@@ -92,8 +89,7 @@ public class AlertController {
       @PathVariable("alertId") Long alarmId,
       @RequestHeader("Authorization") String token
   ) {
-    Member member = memberService.findMemberByEmail(tokenService.getMemberEmail(token));
-    Long alertCnt = alertService.delete(member.getMemberId(), alarmId);
+    Long alertCnt = alertService.delete(tokenService.getMemberId(token), alarmId);
     return ResponseEntity.ok(alertCnt);
   }
 

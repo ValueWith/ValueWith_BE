@@ -62,7 +62,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       throw new CustomException(UNVALIDATED_REDIRECT_URI);
     }
 
-    String targetUri = redirectUri.orElse(getDefaultTargetUrl());
+    String targetUri = appProperties.getOAuth2().getAuthorizedRedirectUris().get(0);
     String refreshToken = tokenService.createRefreshToken();
     Optional<Member> member = getMember(authentication);
 

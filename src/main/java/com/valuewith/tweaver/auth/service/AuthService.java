@@ -73,6 +73,7 @@ public class AuthService {
   public Boolean isVerified(AuthDto.VerificationForm form) {
     String emailCode = form.getCode();
     String savedCode = redisUtilService.getData(form.getEmail());
+    // 이부분에 Email이 인증되었다는 값을 Redis에 저장해 두고 signUp에서 가지고 오면 되지 않나?
     if (savedCode.isEmpty()) {
       throw new CustomException(INVALID_CODE);
     }

@@ -3,6 +3,7 @@ package com.valuewith.tweaver.auth.service;
 import static com.valuewith.tweaver.constants.ErrorCode.*;
 
 import com.valuewith.tweaver.auth.dto.AuthDto;
+import com.valuewith.tweaver.auth.dto.AuthDto.RefreshToken;
 import com.valuewith.tweaver.auth.dto.AuthDto.SignInForm;
 import com.valuewith.tweaver.auth.dto.AuthDto.TokensAndMemberId;
 import com.valuewith.tweaver.auth.dto.LoginMemberIdDto;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -87,18 +89,22 @@ public class AuthService {
     return memberRepository.existsByEmail(email.toLowerCase(Locale.ROOT));
   }
 
-  public TokensAndMemberId reissueTwoTokens(HttpServletResponse response, String refreshToken) {
-    Optional<Member> member = memberRepository.findByRefreshToken(refreshToken);
-    if (member.isEmpty()) {
+  public TokensAndMemberId reissueTwoTokens(HttpServletResponse response, RefreshToken token) {
+    String refreshToken = token.getRefreshToken();
+    System.out.println("refreshToken = " + refreshToken);
+    Optional<Member> optionalMember = memberRepository.findByRefreshToken(refreshToken);
+    if (optionalMember.isEmpty()) {
+      System.out.println("Empty Member");
       return null;
     }
-    String newRefreshToken = reissueRefreshToken(member.get());
-    String newAccessToken = tokenService.createAccessToken(member.get().getEmail(), member.get().getMemberId());
+    Member member = optionalMember.get();
+    String newRefreshToken = reissueRefreshToken(member);
+    String newAccessToken = tokenService.createAccessToken(member.getEmail(), member.getMemberId());
 
     tokenService.sendAccessToken(response, newAccessToken);
     tokenService.sendAccessTokenAndRefreshToken(response, newAccessToken, newRefreshToken);
 
-    LoginMemberIdDto loginMember = LoginMemberIdDto.from(member.get());
+    LoginMemberIdDto loginMember = LoginMemberIdDto.from(member);
     return TokensAndMemberId.from(newAccessToken, newRefreshToken, loginMember);
   }
 

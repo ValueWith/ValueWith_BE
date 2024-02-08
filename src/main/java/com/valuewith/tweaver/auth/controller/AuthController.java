@@ -1,6 +1,7 @@
 package com.valuewith.tweaver.auth.controller;
 
 import com.valuewith.tweaver.auth.dto.AuthDto.EmailInput;
+import com.valuewith.tweaver.auth.dto.AuthDto.RefreshToken;
 import com.valuewith.tweaver.auth.dto.AuthDto.SignUpForm;
 import com.valuewith.tweaver.auth.dto.AuthDto.TokensAndMemberId;
 import com.valuewith.tweaver.auth.dto.AuthDto.VerificationForm;
@@ -82,7 +83,7 @@ public class AuthController {
   })
   @PostMapping("/refresh")
   public ResponseEntity<TokensAndMemberId> reissueAccessToken(HttpServletResponse response,
-      @RequestBody String refreshToken) {
+      @RequestBody RefreshToken refreshToken) {
 
     TokensAndMemberId memberData = authService.reissueTwoTokens(response, refreshToken);
 

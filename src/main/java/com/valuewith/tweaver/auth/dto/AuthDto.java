@@ -107,4 +107,15 @@ public class AuthDto {
           .build();
     }
   }
+
+  @Getter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Builder
+  @ApiModel("리프레시 토큰")
+  public static class RefreshToken {
+
+    @ApiModelProperty(value = "리프레시 토큰", example = "abcd...")
+    private String refreshToken;
+  }
 }

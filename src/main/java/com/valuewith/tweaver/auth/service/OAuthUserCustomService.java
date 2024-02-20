@@ -8,6 +8,7 @@ import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OAuthUserCustomService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -32,7 +34,7 @@ public class OAuthUserCustomService implements OAuth2UserService<OAuth2UserReque
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
     OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
     OAuth2User oAuth2User = delegate.loadUser(userRequest);
-
+    log.info("OAuth2 진입: loadUser()");
     String registrationId = userRequest.getClientRegistration()
         .getRegistrationId();
     String memberAttributedName = userRequest.getClientRegistration().getProviderDetails()
@@ -43,7 +45,7 @@ public class OAuthUserCustomService implements OAuth2UserService<OAuth2UserReque
 
     // OAuth2 로그인을 통해 가져온 OAuth2User의 attribute를 담아주는 of 메소드.
     OAuthAttributes extractAttr = OAuthAttributes.of(memberAttributedName, attributes);
-
+    log.info("OAuth2 User Email: " + extractAttr.getOauth2UserInfo().getEmail());
     Member member = getMember(extractAttr, provider);
 
     return new PrincipalDetails(member, attributes);
@@ -52,7 +54,7 @@ public class OAuthUserCustomService implements OAuth2UserService<OAuth2UserReque
   private Provider getProvider(String registrationId) {
     // 다른 소셜로그인이 있다면 추가해야합니다.
     // TODO: 허가받지 않은 url 호출시 카카오 로그인이 됩니다. 이부분 수정하면 될 것 같습니다. -eod940
-    System.out.println(registrationId + " 로그인 진행중");
+    log.info(registrationId + " 로그인 진행중");
     return Provider.KAKAO;
   }
 
@@ -72,6 +74,7 @@ public class OAuthUserCustomService implements OAuth2UserService<OAuth2UserReque
     String refreshToken = tokenService.createRefreshToken();
     Member member = extractAttribute.toEntity(provider, refreshToken,
         extractAttribute.getOauth2UserInfo());
+    log.info(provider + " 소셜로그인 회원가입 완료");
     return memberRepository.save(member);
   }
 }

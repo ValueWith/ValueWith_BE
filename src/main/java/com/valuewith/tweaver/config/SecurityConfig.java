@@ -51,7 +51,8 @@ public class SecurityConfig {
           config.setAllowedOrigins(Arrays.asList(
               "https://tweaver.vercel.app",
               "http://localhost:5173",
-              "http://127.0.0.1:5173"
+              "http://127.0.0.1:5173",
+              "https://valuewith.site"
               ));
           config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
           config.setAllowedHeaders(Arrays.asList("*"));

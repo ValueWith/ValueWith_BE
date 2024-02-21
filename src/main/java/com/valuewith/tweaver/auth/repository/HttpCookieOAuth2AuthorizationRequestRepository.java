@@ -3,10 +3,12 @@ package com.valuewith.tweaver.auth.repository;
 import com.valuewith.tweaver.commons.security.service.CookieService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
+@Log4j2
 public class HttpCookieOAuth2AuthorizationRequestRepository implements
     AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
@@ -26,6 +28,12 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements
   @Override
   public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest,
       HttpServletRequest request, HttpServletResponse response) {
+    log.info("========================");
+    log.info("들어온 Method: " + request.getMethod());
+    log.info("들어온 URL: " + request.getRequestURL());
+    log.info("들어온 URI: " + request.getRequestURI());
+    log.info("들어온 QueryString: " + request.getQueryString());
+    log.info("========================");
     if (authorizationRequest == null) {
       CookieService.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
       CookieService.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);

@@ -13,6 +13,7 @@ import com.valuewith.tweaver.commons.security.JwtAuthenticationFilter;
 import com.valuewith.tweaver.commons.security.service.TokenService;
 import com.valuewith.tweaver.member.repository.MemberRepository;
 import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,10 +53,11 @@ public class SecurityConfig {
               "https://tweaver.vercel.app",
               "http://localhost:5173",
               "http://127.0.0.1:5173",
-              "https://valuewith.site"
+              "https://valuewith.site",
+              "https://value-with-m8p17yj83-yujinji.vercel.app"
               ));
           config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-          config.setAllowedHeaders(Arrays.asList("*"));
+          config.setAllowedHeaders(List.of("*"));
           config.setAllowCredentials(true);
           return config;
         }))

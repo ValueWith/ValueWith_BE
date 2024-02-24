@@ -4,7 +4,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valuewith.tweaver.auth.dto.AuthDto;
 import com.valuewith.tweaver.auth.dto.AuthDto.SignUpForm;
 import com.valuewith.tweaver.auth.service.AuthService;
@@ -15,7 +14,6 @@ import com.valuewith.tweaver.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
@@ -25,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(AuthController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-@AutoConfigureMockMvc
 class AuthControllerTest {
 
   @MockBean

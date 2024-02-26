@@ -1,7 +1,6 @@
 package com.valuewith.tweaver.auth.service;
 
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,7 +8,6 @@ import static org.mockito.Mockito.when;
 import com.valuewith.tweaver.auth.dto.AuthDto;
 import com.valuewith.tweaver.constants.ImageType;
 import com.valuewith.tweaver.defaultImage.entity.DefaultImage;
-import com.valuewith.tweaver.defaultImage.entity.DefaultImage.DefaultImageBuilder;
 import com.valuewith.tweaver.defaultImage.repository.DefaultImageRepository;
 import com.valuewith.tweaver.defaultImage.service.ImageService;
 import com.valuewith.tweaver.member.entity.Member;
@@ -17,14 +15,15 @@ import com.valuewith.tweaver.member.repository.MemberRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class AuthServiceUnitTest {
 

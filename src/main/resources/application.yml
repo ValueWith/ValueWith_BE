@@ -1,0 +1,107 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: tweaver
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    open-in-view: true
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+
+  profiles:
+    include: secret
+
+  redis:
+    host: ${IP_ADDRESS}
+    port: 6379
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${kakao-client-id}
+            client-secret: ${kakao-client-secret}
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+              - gender
+              - age_range
+            client-name: Kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            redirect-uri: https://valuewith.site/oauth2/callback/kakao
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  freemarker:
+    cache: false
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+  main:
+    allow-bean-definition-overriding: true
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+cloud front:
+  distribution:
+    domain: ${CLOUD_FRONT_NAME}
+
+kakao-rest-api-key: ${kakao-rest-api-key}
+
+app:
+  oauth2:
+    authorizedRedirectUris:
+      - https://tweaver.vercel.app/oauth2/kakao
+
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace

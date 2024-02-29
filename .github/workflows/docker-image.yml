@@ -24,13 +24,13 @@ jobs:
 
     # 2. Gradle 세팅
     - name: Init Gradle
-      uses: gradle/gradle-build-action@1
+      uses: gradle/gradle-build-action67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         gradle-version: 8.6
 
     # 3. Tweaver 빌드하기
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@1
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: clean bootJar
 

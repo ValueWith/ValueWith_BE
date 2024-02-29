@@ -24,9 +24,7 @@ jobs:
 
     # 2. Tweaver 빌드하기
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: clean bootJar
+      run: ./gradlew assemble
 
     # 3. Docker image 빌드하기
     - uses: actions/checkout@v3

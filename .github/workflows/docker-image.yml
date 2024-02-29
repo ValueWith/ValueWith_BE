@@ -22,23 +22,30 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # 2. Tweaver 빌드하기
+    # 2. Gradle 세팅
+    - name: Init Gradle
+      uses: gradle/gradle-build-action@v1
+      with:
+        gradle-version: 7.6.1
+
+    # 3. Tweaver 빌드하기
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      run: ./gradlew assemble
+      with:
+        arguments: clean bootJar
 
-    # 3. Docker image 빌드하기
+    # 4. Docker image 빌드하기
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag github-actions/tweaver
 
-    # 4. Docker 로그인 하기
+    # 5. Docker 로그인 하기
     - name: Docker login
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_ID }}
         password: ${{ secrets.DOCKERHUB_PW }}
 
-    # 5. Docker 푸시하기
+    # 6. Docker 푸시하기
     - name: docker Hub push
       run: docker push github-action/tweaver

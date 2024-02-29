@@ -1,17 +1,40 @@
+version: "3.9"
+services:
+  web:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - tweaver-app
 
-  version: "3"
-  services:
-    app:
-      image: "tweaver"
-      env_file:
-        - trip.env
-    redis:
-      image: redis:alpine
-      command: redis-server --port 6379
-      container_name: tweaver_redis
-      hostname: tweaver_redis
-      labels:
-        - "name=redis"
-        - "mode=standalone"
-      ports:
-        - "6379:6379"
+  tweaver-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - "TZ=Asia/Seoul"
+    ports:
+      - "8080:8080"
+    image: eod940/tweaver
+    env_file:
+      - trip.env
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
+    command: redis-server --port 6379
+    container_name: tweaver-redis
+    hostname: tweaver-redis
+    labels:
+      - "name=tweaver-redis"
+      - "mode=standalone"
+    ports:
+      - "6379:6379"
+
+networks:
+  default:
+    external: true
+    name: tweaver-network

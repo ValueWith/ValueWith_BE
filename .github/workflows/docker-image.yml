@@ -7,6 +7,8 @@ on:
   # 개발서버 구축 이후 pr 오픈
   # pull_request:
   #   branches: [ "master" ]
+permissions:
+  contents: read
 
 jobs:
 
@@ -34,7 +36,7 @@ jobs:
         touch ./application.yml
         
         # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
-        echo "${{ secrets.APPLICATION_PROD }}" >> ./application.yaml
+        echo "${{ secrets.APPLICATION_PROD }}" >> ./application.yml
       shell: bash
 
     # 2. Gradle 세팅
@@ -43,11 +45,13 @@ jobs:
       with:
         gradle-version: 8.6
 
+    # Gradle Build를 위한 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
     # 3. Tweaver 빌드하기
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: clean bootJar
+      run: ./gradlew clean build --exclude-task test
 
     # 4. Docker image 빌드하기
     - uses: actions/checkout@v3

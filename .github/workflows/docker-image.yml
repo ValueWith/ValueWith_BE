@@ -29,13 +29,12 @@ jobs:
 
     - name: make application.yml
       run: |
-        # create application-prod.yml
+        # application.yml 파일 생성
+        # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
         cd ./src/main/resources
         
-        # application-database.yaml 파일 생성
         touch ./application.yml
         
-        # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
         echo "${{ secrets.APPLICATION_PROD }}" >> ./application.yml
       shell: bash
 
@@ -56,7 +55,7 @@ jobs:
     # 4. Docker image 빌드하기
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag github-actions/tweaver
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_ID }}/tweaver
 
     # 5. Docker 로그인 하기
     - name: Docker login
@@ -67,4 +66,4 @@ jobs:
 
     # 6. Docker 푸시하기
     - name: docker Hub push
-      run: docker push github-action/tweaver
+      run: docker push ${{ secrets.DOCKERHUB_ID }}/tweaver

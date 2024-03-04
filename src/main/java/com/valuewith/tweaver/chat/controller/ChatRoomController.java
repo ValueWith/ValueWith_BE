@@ -114,7 +114,7 @@ public class ChatRoomController {
     List<ChatRoomDto2> leaderChat = tripGroupService.findChatRoomByMemberId(member.getMemberId())
         .stream()
         .map(TripGroup::getTripGroupId)
-        .map(chatRoomService::findByChatRoomId)
+        .map(chatRoomService::findChatRoomListByTripGroupId)
         .map(chatRoom ->
             ChatRoomDto2.from(chatRoom,
                 messageService.findLastMessage(chatRoom.getChatRoomId())))

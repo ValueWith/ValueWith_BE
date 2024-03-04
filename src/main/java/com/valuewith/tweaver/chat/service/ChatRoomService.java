@@ -52,7 +52,7 @@ public class ChatRoomService {
         .orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
   }
 
-  public List<ChatRoom> findChatRoomListByTripGroupId(Long tripGroupId) {
+  public ChatRoom findChatRoomListByTripGroupId(Long tripGroupId) {
     return chatRoomRepository.findChatRoomsByTripGroup_TripGroupId(tripGroupId);
   }
 }

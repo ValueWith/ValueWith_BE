@@ -1,7 +1,6 @@
 package com.valuewith.tweaver.comment.entity;
 
 import com.valuewith.tweaver.auditing.BaseEntity;
-import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.post.entity.Post;
 import javax.persistence.Entity;
@@ -11,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -43,5 +43,5 @@ public class Post extends BaseEntity {
 
   private String title;
 
-  private String comment;
+  private String content;
 }

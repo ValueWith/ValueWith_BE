@@ -1,6 +1,5 @@
 package com.valuewith.tweaver.like.entity;
 
-import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.post.entity.Post;
 import javax.persistence.Entity;

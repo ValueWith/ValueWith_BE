@@ -1,7 +1,6 @@
 package com.valuewith.tweaver.postHashtag.entity;
 
 import com.valuewith.tweaver.hashtag.entity.Hashtag;
-import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.post.entity.Post;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +23,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostHashtag {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long post_hashtag_id;

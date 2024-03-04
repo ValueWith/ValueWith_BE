@@ -1,4 +1,4 @@
-package com.valuewith.tweaver.like.entity;
+package com.valuewith.tweaver.postLike.entity;
 
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.post.entity.Post;
@@ -17,15 +17,15 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "LIKE")
+@Table(name = "POST_LIKE")
 @Getter
 @ToString
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like {
+public class PostLike {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long likeId;
+  private Long postLikeId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")

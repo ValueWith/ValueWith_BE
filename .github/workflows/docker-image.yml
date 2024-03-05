@@ -7,6 +7,14 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_ID }}/tweaver
+  AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}  # S3 버킷 이름
+  AWS_CODE_DEPLOY_NAME: valuewith-codedeploy  # CodeDeploy 애플리케이션 이름
+  AWS_CODE_DEPLOY_GROUP: valuewith-codedeploy-group  # CodeDeploy 배포 그룹 이름
+
+
 permissions:
   contents: read
 
@@ -50,7 +58,7 @@ jobs:
     # 5. Docker image 빌드하기
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_ID }}/tweaver
+      run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}:${{ secrets.MAJOR }}.${{ secrets.MINOR }}
 
     # 6. Docker 로그인 하기
     - name: Docker login
@@ -61,4 +69,55 @@ jobs:
 
     # 7. Docker 푸시하기
     - name: docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_ID }}/tweaver
+      run: docker push ${{ env.IMAGE_NAME }}:${{ secrets.MAJOR }}.${{ secrets.MINOR }}
+
+##### 배포
+
+    # 8. Docker 이미지 이름을 image.txt 파일에 쓰기
+    - name: Write Docker image name to txt file
+      run: echo "${{ env.IMAGE_NAME }}:${{ secrets.MAJOR }}.${{ secrets.MINOR }}" > image.txt
+
+    # 9. CodeDeploy 배포를 위한 관련 파일 압축
+    - name: Create zip file for AWS CodeDeploy
+      run: mkdir ${{ env.AWS_CODE_DEPLOY_NAME }} && cp -r appspec.yml image.txt scripts ${{ env.AWS_CODE_DEPLOY_NAME }}
+
+    # 10. AWS 설정
+    - name: AWS Configure
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.IAM_ACCESS }}
+        aws-secret-access-key: ${{ secrets.IAM_SECRET_ACCESS }}
+        aws-region: ap-northeast-2
+
+    # 11. AWS S3로 배포 파일 업로드
+    - name: Upload to AWS S3
+      run: |
+        aws deploy push \
+          --application-name ${{ env.AWS_CODE_DEPLOY_NAME }} \
+          --s3-location s3://${{ env.AWS_S3_BUCKET_NAME }}/codedeploy/$GITHUB_SHA.zip \
+          --ignore-hidden-files \
+          --source ${{ env.AWS_CODE_DEPLOY_NAME }}
+
+    # 12. AWS EC2 CodeDeploy 배포 요청
+    - name: Delpoy to AWS EC2
+      run: |
+        aws deploy create-deployment \
+          --application-name ${{ env.AWS_CODE_DEPLOY_NAME }} \
+          --deployment-config-name CodeDeployDefault.OneAtATime \
+          --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} \
+          --description "Deploy artscope" \
+          --s3-location bucket=$AWS_S3_BUCKET_NAME,key=codedeploy/$GITHUB_SHA.zip,bundleType=zip
+
+    # 13. 자동 버전 관리
+    - name: Autoincrement a new minor version
+      run: |
+        echo "NEW_MINOR_VERSION=$((${{ secrets.MINOR }}+1))" >> $GITHUB_ENV
+
+    # 14. 마이너 버전 업데이트
+    - name: Update Minor version
+      uses: hmanzur/actions-set-secret@v2.0.0
+      with:
+        name: 'MINOR'
+        value: ${{ env.NEW_MINOR_VERSION }}
+        repository: ${{ secrets.REPO }}
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}

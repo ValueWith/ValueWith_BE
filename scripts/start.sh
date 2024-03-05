@@ -7,7 +7,7 @@ SERVICE_NAME=tweaver
 echo "version: '3.9'
 services:
 
-  tweaver-app:
+  tweaver:
     build:
       context: .
       dockerfile: Dockerfile

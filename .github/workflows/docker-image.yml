@@ -10,7 +10,6 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ secrets.DOCKERHUB_ID }}/tweaver
-  NEW_MINOR_VERSION: 0
   AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}  # S3 버킷 이름
   AWS_CODE_DEPLOY_NAME: valuewith-codedeploy  # CodeDeploy 애플리케이션 이름
   AWS_CODE_DEPLOY_GROUP: valuewith-codedeploy-group  # CodeDeploy 배포 그룹 이름

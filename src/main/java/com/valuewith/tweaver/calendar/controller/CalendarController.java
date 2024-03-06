@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.calendar.controller;
 
+import com.valuewith.tweaver.calendar.dto.CalendarDetailResponseDto;
 import com.valuewith.tweaver.calendar.dto.CalendarResponseDto;
 import com.valuewith.tweaver.calendar.service.CalendarService;
 import com.valuewith.tweaver.commons.security.service.TokenService;
@@ -39,5 +40,17 @@ public class CalendarController {
   ) {
     List<CalendarResponseDto> calendarList = calendarService.getCalendarList(tokenService.getMemberId(token), date, type);
     return ResponseEntity.ok(calendarList);
+  }
+
+  @ApiOperation(value = "날짜, 그룹 별 후기 정보 API",
+      notes = "date : 날짜\n")
+  @GetMapping("detail")
+  public ResponseEntity<List<CalendarDetailResponseDto>> getCalenderDetail(
+      @RequestHeader("Authorization") String token,
+      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
+      @RequestParam Long tripGroupId
+  ) {
+    List<CalendarDetailResponseDto> calendarDetailList = calendarService.getCalendarDetail(tokenService.getMemberId(token), date, tripGroupId);
+    return ResponseEntity.ok(calendarDetailList);
   }
 }

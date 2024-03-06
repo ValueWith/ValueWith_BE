@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.calendar.service;
 
+import com.valuewith.tweaver.calendar.dto.CalendarDetailResponseDto;
 import com.valuewith.tweaver.calendar.dto.CalendarResponseDto;
 import com.valuewith.tweaver.calendar.repository.CalendarRepository;
 import java.time.LocalDate;
@@ -16,5 +17,9 @@ public class CalendarService {
 
   public List<CalendarResponseDto> getCalendarList(Long memberId, LocalDate date, String type){
     return calendarRepository.getCalenderList(memberId, date, type);
+  }
+
+  public List<CalendarDetailResponseDto> getCalendarDetail(Long memberId, LocalDate date, Long tripGroupId) {
+    return calendarRepository.getCalendarDetail(memberId, date, tripGroupId);
   }
 }

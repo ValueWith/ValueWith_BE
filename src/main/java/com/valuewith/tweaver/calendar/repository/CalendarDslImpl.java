@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.valuewith.tweaver.calendar.dto.CalendarDetailResponseDto;
 import com.valuewith.tweaver.calendar.dto.CalendarResponseDto;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +32,22 @@ public class CalendarDslImpl implements CalendarDsl{
         ).from(tripGroup)
         .where(formattedDate.eq(date.format(DateTimeFormatter.ofPattern("yyyy-MM"))),
             eqType(type))
+        .fetch();
+  }
+
+  @Override
+  public List<CalendarDetailResponseDto> getCalendarDetail(Long memberId, LocalDate date, Long tripGroupId) {
+    StringExpression formattedDate = Expressions.stringTemplate("FUNCTION('DATE_FORMAT', {0}, '%Y-%m-%d')", post.tripGroup.tripDate);
+    return query
+        .select(
+            Projections.fields(CalendarDetailResponseDto.class,
+                post.postId,
+                post.title,
+                post.content)
+        ).from(post)
+        .where(post.member.memberId.eq(memberId)
+            .and(post.tripGroup.tripGroupId.eq(tripGroupId))
+            .and(formattedDate.eq(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))))
         .fetch();
   }
 

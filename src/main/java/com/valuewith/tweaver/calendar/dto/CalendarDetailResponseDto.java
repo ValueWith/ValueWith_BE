@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CalendarDetailResponseDto {
   private Long postId;
-  private String postTile;
+  private String postTitle;
   private String postContent;
 }

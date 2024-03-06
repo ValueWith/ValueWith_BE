@@ -67,8 +67,8 @@ public class CalendarDslImpl implements CalendarDsl{
         .select(
             Projections.fields(CalendarDetailResponseDto.class,
                 post.postId,
-                post.title,
-                post.content)
+                post.title.as("postTitle"),
+                post.content.as("postContent"))
         ).from(post)
         .where(post.member.memberId.eq(memberId)
             .and(post.tripGroup.tripGroupId.eq(tripGroupId))

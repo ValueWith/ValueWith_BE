@@ -3,6 +3,7 @@ package com.valuewith.tweaver.post.controller;
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.post.dto.PostForm;
 import com.valuewith.tweaver.post.service.PostService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class PostController {
   @PostMapping
   public ResponseEntity<String> createPost(
       @AuthenticationPrincipal PrincipalDetails principalDetails,
-      @RequestBody PostForm postForm) {
+      @RequestBody @Valid PostForm postForm) {
 
     String postResult = postService.createPost(principalDetails, postForm);
 

@@ -2,7 +2,6 @@ package com.valuewith.tweaver.post.service;
 
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.group.entity.TripGroup;
-import com.valuewith.tweaver.group.repository.TripGroupRepository;
 import com.valuewith.tweaver.group.service.TripGroupService;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
@@ -38,6 +37,6 @@ public class PostService {
 
     postRepository.save(post);
 
-    return "작성 성공";
+    return "ok";
   }
 }

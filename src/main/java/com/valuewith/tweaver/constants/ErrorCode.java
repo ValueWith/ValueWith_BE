@@ -25,6 +25,8 @@ public enum ErrorCode {
     CHAT_ROOM_NOT_FOUND("채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     CHAT_ROOM_NOT_FOUND_FOR_DELETE("삭제하려는 채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    GROUP_NOT_FOUND("그룹을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    GROUP_NOT_FOUND_FOR_DELETE("삭제하려는 그룹을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // 409
     DUPLICATE_EMAIL("중복된 이메일입니다.", HttpStatus.CONFLICT),
 

@@ -1,6 +1,9 @@
 package com.valuewith.tweaver.post.service;
 
+import static com.valuewith.tweaver.constants.ErrorCode.INVALID_USER_DETAILS;
+
 import com.valuewith.tweaver.commons.PrincipalDetails;
+import com.valuewith.tweaver.exception.CustomException;
 import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.service.TripGroupService;
 import com.valuewith.tweaver.member.entity.Member;
@@ -25,6 +28,9 @@ public class PostService {
   @Transactional
   public String createPost(PrincipalDetails principalDetails, PostForm postForm) {
 
+    if (principalDetails == null) {
+      throw new CustomException(INVALID_USER_DETAILS);
+    }
     Member postCreator = memberService.findMemberByEmail(principalDetails.getUsername());
     TripGroup trip = tripGroupService.findTripByTripGroupId(postForm.getTripGroupId());
 

@@ -19,6 +19,7 @@ public enum ErrorCode {
     INVALID_CODE("만료된 코드 입니다.", HttpStatus.UNAUTHORIZED),
     INCORRECT_CODE("인증코드가 다릅니다.", HttpStatus.UNAUTHORIZED),
     INVALID_JWT("잘못된 인증 정보입니다.", HttpStatus.UNAUTHORIZED),
+    INVALID_USER_DETAILS("잘못된 접근입니다.", HttpStatus.UNAUTHORIZED),
     NOT_A_MEMBER("해당 그룹원이 아닙니다.", HttpStatus.UNAUTHORIZED),
     UNVALIDATED_REDIRECT_URI("인증에 실패하였습니다.\n(Unauthorized uri)", HttpStatus.UNAUTHORIZED),
     // 404

@@ -1,0 +1,9 @@
+### create account
+POST http://localhost:8080/post
+Content-Type: application/json
+
+{
+  "title": "title",
+  "content": "content",
+  "tripGroupId": 1
+}

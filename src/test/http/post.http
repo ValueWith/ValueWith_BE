@@ -14,7 +14,7 @@ Content-Type: application/json
 {
   "title": "title",
   "content": "content",
-  "tripGroupId": 1
+  "tripGroupId": 2
 }
 
 

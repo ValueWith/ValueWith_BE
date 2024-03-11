@@ -46,7 +46,7 @@ public class PostService {
         .tripGroup(trip)
         .build();
 
-    if (!images.isEmpty()) {  // 이미지가 있으면 이미지 리스트 생성
+    if (images != null && !images.isEmpty()) {  // 이미지가 있으면 이미지 리스트 생성
       postImageService.saveImageList(images, post);
     }
 

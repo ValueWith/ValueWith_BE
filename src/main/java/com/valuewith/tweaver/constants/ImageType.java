@@ -1,5 +1,8 @@
 package com.valuewith.tweaver.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum ImageType {
 
     PROFILE("profile/"),
@@ -10,11 +13,9 @@ public enum ImageType {
 
     private final String path;
 
+
     ImageType(String path) {
         this.path = path;
     }
 
-    public String getPath() {
-        return path;
-    }
 }

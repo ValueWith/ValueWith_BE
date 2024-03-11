@@ -2,7 +2,6 @@ package com.valuewith.tweaver.postImage.service;
 
 import static com.valuewith.tweaver.constants.ErrorCode.IMAGE_SAVE_ERROR;
 
-import com.valuewith.tweaver.constants.ErrorCode;
 import com.valuewith.tweaver.constants.ImageType;
 import com.valuewith.tweaver.defaultImage.service.ImageService;
 import com.valuewith.tweaver.exception.CustomException;
@@ -12,6 +11,7 @@ import com.valuewith.tweaver.postImage.entity.PostImage;
 import com.valuewith.tweaver.postImage.repository.PostImageRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class PostImageService {
 
   private ImageService imageService;

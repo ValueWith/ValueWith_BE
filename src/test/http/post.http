@@ -1,18 +1,39 @@
-### create account
+### create post(후기)
 POST http://localhost:8080/post
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="files", filename="skull.png"
+Content-Disposition: form-data; name="file", filename="skull.png"
 Content-Type: image/png
 
+< ./skull.png
 --WebAppBoundary
-Content-Disposition: form-data; name="postform"
+Content-Disposition: form-data; name="postForm"
 Content-Type: application/json
 
 {
   "title": "title",
   "content": "content",
-  "tripId": 1
+  "tripGroupId": 1
 }
---WebAppBoundary--
+
+
+### create post(후기) without image
+POST http://localhost:8080/post
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3MiLCJlbWFpbCI6I...
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file", filename="skull.png"
+Content-Type: image/png
+
+< ./skull.png
+--WebAppBoundary
+Content-Disposition: form-data; name="postForm"
+Content-Type: application/json
+
+{
+  "title": "title",
+  "content": "content",
+  "tripGroupId": 1
+}

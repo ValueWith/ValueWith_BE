@@ -24,7 +24,7 @@ import lombok.experimental.SuperBuilder;
 public class PostImage {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long post_image_id;
+  private Long postImageId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")

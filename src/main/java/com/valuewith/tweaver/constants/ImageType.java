@@ -5,7 +5,8 @@ public enum ImageType {
     PROFILE("profile/"),
     THUMBNAIL("thumbnail/"),
     LOCATION("location/"),
-    MEMBER("member/");
+    MEMBER("member/"),
+    POST("post/");
 
     private final String path;
 

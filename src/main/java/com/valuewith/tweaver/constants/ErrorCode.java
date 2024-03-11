@@ -14,7 +14,6 @@ public enum ErrorCode {
     LOCATION_NAME_NOT_FOUNT("지역 이름은 필수입니다.", HttpStatus.BAD_REQUEST),
     INVALID_PROFILE_MODIFIED_MEMBER("프로필 수정 권한이 없습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION),
     NOT_MATCH_PASSWORD("입력한 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
-    // ======== Auth ========
     // 401
     INVALID_CODE("만료된 코드 입니다.", HttpStatus.UNAUTHORIZED),
     INCORRECT_CODE("인증코드가 다릅니다.", HttpStatus.UNAUTHORIZED),
@@ -35,7 +34,11 @@ public enum ErrorCode {
     MEMBER_COUNT_CANNOT_BE_NEGATIVE("그룹 멤버는 0명 이하가 될 수 없습니다", HttpStatus.UNPROCESSABLE_ENTITY),
     MEMBER_COUNT_MAX("그룹이 이미 최대 인원에 도달했습니다. 더 이상 신청할 수 없습니다.", HttpStatus.UNPROCESSABLE_ENTITY),
 
+    // 500
+    IMAGE_SAVE_ERROR("이미지 저장 과정에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
     // 502
+    FAILURE_SAVE_IMAGE("이미지를 확인해주세요.", HttpStatus.BAD_GATEWAY),
     FAILURE_SENDING_EMAIL("이메일 전송에 실패하였습니다.", HttpStatus.BAD_GATEWAY),
     FAILURE_GETTING_PROFILE_IMG("프로필 이미지가 없습니다.", HttpStatus.BAD_GATEWAY)
     ;

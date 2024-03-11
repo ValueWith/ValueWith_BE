@@ -1,9 +1,18 @@
 ### create account
 POST http://localhost:8080/post
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="files", filename="skull.png"
+Content-Type: image/png
+
+--WebAppBoundary
+Content-Disposition: form-data; name="postform"
 Content-Type: application/json
 
 {
   "title": "title",
   "content": "content",
-  "tripGroupId": 1
+  "tripId": 1
 }
+--WebAppBoundary--

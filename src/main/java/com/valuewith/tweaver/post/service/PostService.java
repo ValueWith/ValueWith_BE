@@ -13,6 +13,7 @@ import com.valuewith.tweaver.post.dto.PostResponseDto;
 import com.valuewith.tweaver.post.entity.Post;
 import com.valuewith.tweaver.post.repository.PostRepository;
 import com.valuewith.tweaver.postImage.service.PostImageService;
+import com.valuewith.tweaver.postLike.repository.PostLikeRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class PostService {
   private final MemberService memberService;
   private final TripGroupService tripGroupService;
   private final PostImageService postImageService;
+  private final PostLikeRepository postLikeRepository;
 
   @Transactional
   public String createPost(PrincipalDetails principalDetails, PostForm postForm,
@@ -61,8 +63,16 @@ public class PostService {
   public List<Post> getFilteredPostList(String area, String title, Pageable pageable) {
 
     List<Post> postList = postRepository.findPostByTitleAndTripGroupArea(title, area, pageable);
-
-    List<PostResponseDto> postResponses = postList.stream().map(PostResponseDto::from)
+    List<PostResponseDto> postResponses = postList.stream()
+        .map(PostResponseDto::from)
+        .map(postRes -> {
+          Long likeNums = postLikeRepository.countPostLikeByPostId(postRes.getPostId());
+          postRes.builder().postLikeNumber(likeNums).build();
+          return postRes;})
+//        .map(postRes -> {
+//          Long commentNums = commentRepository.countCommentByPostTitle(postRes.getPostId());
+//          return postRes;
+//        })
         .collect(Collectors.toList());
     Long total = (long) postList.size();
     Integer totalPages = (int) Math.ceil((double) total / pageable.getPageSize());

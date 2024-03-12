@@ -14,8 +14,8 @@ public class PostResponseDto {
   private Long postId;
   private String title;
   private String content;
-  private Integer postLikeNumber;
-  private Integer commentNumber;
+  private Long postLikeNumber;
+  private Long commentNumber;
   private String createAt;
 
   public static PostResponseDto from(Post post) {
@@ -24,6 +24,13 @@ public class PostResponseDto {
         .postId(post.getPostId())
         .title(post.getTitle())
         .content(post.getContent())
+        .createAt(post.getCreatedDateTime().format(formatter))
+        .build();
+  }
+
+  public static PostResponseDto from(Long postLikeNumber) {
+    return PostResponseDto.builder()
+        .postLikeNumber(postLikeNumber)
         .build();
   }
 }

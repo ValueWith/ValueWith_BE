@@ -2,6 +2,7 @@ package com.valuewith.tweaver.post.controller;
 
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.post.dto.PostForm;
+import com.valuewith.tweaver.post.dto.PostListResponseDto;
 import com.valuewith.tweaver.post.service.PostService;
 import java.util.List;
 import javax.validation.Valid;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -31,4 +33,10 @@ public class PostController {
 
     return ResponseEntity.ok(postService.createPost(principalDetails, postForm, images));
   }
+
+//  @GetMapping("/list")
+//  public ResponseEntity<PostListResponseDto> getPostList() {
+//
+//    return ResponseEntity.ok();
+//  }
 }

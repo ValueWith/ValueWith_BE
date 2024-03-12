@@ -9,12 +9,15 @@ import com.valuewith.tweaver.group.service.TripGroupService;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.service.MemberService;
 import com.valuewith.tweaver.post.dto.PostForm;
+import com.valuewith.tweaver.post.dto.PostResponseDto;
 import com.valuewith.tweaver.post.entity.Post;
 import com.valuewith.tweaver.post.repository.PostRepository;
 import com.valuewith.tweaver.postImage.service.PostImageService;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,5 +56,18 @@ public class PostService {
     postRepository.save(post);
 
     return "ok";
+  }
+
+  public List<Post> getFilteredPostList(String area, String title, Pageable pageable) {
+
+    List<Post> postList = postRepository.findPostByTitleAndTripGroupArea(title, area, pageable);
+
+    List<PostResponseDto> postResponses = postList.stream().map(PostResponseDto::from)
+        .collect(Collectors.toList());
+    Long total = (long) postList.size();
+    Integer totalPages = (int) Math.ceil((double) total / pageable.getPageSize());
+
+
+    return postList;
   }
 }

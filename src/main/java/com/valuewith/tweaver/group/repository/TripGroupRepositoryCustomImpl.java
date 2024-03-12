@@ -5,6 +5,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.valuewith.tweaver.bookmark.entity.QBookmark;
 import com.valuewith.tweaver.constants.ApprovedStatus;
 import com.valuewith.tweaver.constants.GroupStatus;
 import com.valuewith.tweaver.group.entity.QTripGroup;
@@ -27,6 +28,7 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
     private final JPAQueryFactory queryFactory;
     private final QTripGroup qTripGroup = QTripGroup.tripGroup;
     private final QGroupMember qGroupMember = QGroupMember.groupMember;
+    private final QBookmark qBookmark = QBookmark.bookmark;
 
     @Override
     public List<TripGroup> findFilteredTripGroups(
@@ -138,6 +140,26 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
             .where(qTripGroup.member.memberId.eq(memberId)
                 .and(qTripGroup.isDeleted.eq(Boolean.FALSE)))
             .fetch();
+    }
+
+    @Override
+    public Page<TripGroup> findBookmarkTripGroups(Long memberId, Pageable pageable) {
+        List<TripGroup> tripGroups = queryFactory
+            .select(qTripGroup)
+            .from(qTripGroup)
+            .join(qBookmark).on(qBookmark.tripGroup.eq(qTripGroup))
+            .where(qBookmark.member.memberId.eq(memberId))
+            .orderBy(qTripGroup.createdDateTime.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        long total = queryFactory
+            .selectFrom(qTripGroup)
+            .where(qTripGroup.member.memberId.eq(memberId))
+            .fetchCount();
+
+        return new PageImpl<>(tripGroups, pageable, total);
     }
 
 

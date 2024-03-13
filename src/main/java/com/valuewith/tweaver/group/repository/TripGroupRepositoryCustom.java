@@ -22,4 +22,6 @@ public interface TripGroupRepositoryCustom {
     void updateTripGroupStatusToClose();
 
   List<TripGroup> findChatRoomByMemberId(Long memberId);
+
+  Page<TripGroup> findBookmarkTripGroups(Long memberId, Pageable pageable);
 }

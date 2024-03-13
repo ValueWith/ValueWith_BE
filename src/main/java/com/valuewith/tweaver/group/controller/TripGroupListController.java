@@ -87,6 +87,19 @@ public class TripGroupListController {
         return ResponseEntity.ok(tripGroupStatusListDto);
     }
 
+    @ApiOperation(value = "나의 관심 그룹 리스트 조회 API",
+        notes = "내가 북마크 한 여행 그룹\n")
+    @GetMapping("/list/my-bookmark")
+    public ResponseEntity<TripGroupStatusListDto> getMyBookmarkList(
+        @RequestHeader("Authorization") String token,
+        @RequestParam(defaultValue = "1") int page
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, 8);
+        Page<TripGroupStatusResponseDto> myTripGroupList = tripGroupListService.getMyBookmarkTripGroupList(tokenService.getMemberId(token), pageable);
+        TripGroupStatusListDto tripGroupStatusListDto = TripGroupStatusListDto.from(myTripGroupList);
+        return ResponseEntity.ok(tripGroupStatusListDto);
+    }
+
     private Sort sortDirection(String sort) {
         if ("deadline".equals(sort)) {
             return Sort.by("dueDate").ascending();

@@ -97,5 +97,10 @@ public class TripGroupListService {
         return tripGroups.map(TripGroupStatusResponseDto::from);
 
     }
+
+  public Page<TripGroupStatusResponseDto> getMyBookmarkTripGroupList(Long memberId, Pageable pageable) {
+      Page<TripGroup> tripGroups = tripGroupRepository.findBookmarkTripGroups(memberId, pageable);
+      return tripGroups.map(TripGroupStatusResponseDto::from);
+  }
 }
 

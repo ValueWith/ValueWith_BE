@@ -147,7 +147,7 @@ public class TripGroupRepositoryCustomImpl implements TripGroupRepositoryCustom 
         List<TripGroup> tripGroups = queryFactory
             .select(qTripGroup)
             .from(qTripGroup)
-            .join(qBookmark).on(qBookmark.tripGroup.eq(qTripGroup))
+            .leftJoin(qBookmark).on(qBookmark.tripGroup.eq(qTripGroup))
             .where(qBookmark.member.memberId.eq(memberId))
             .orderBy(qTripGroup.createdDateTime.desc())
             .offset(pageable.getOffset())

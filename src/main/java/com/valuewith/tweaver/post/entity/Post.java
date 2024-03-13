@@ -1,8 +1,11 @@
 package com.valuewith.tweaver.post.entity;
 
 import com.valuewith.tweaver.auditing.BaseEntity;
+import com.valuewith.tweaver.comment.entity.Comment;
 import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.member.entity.Member;
+import com.valuewith.tweaver.postLike.entity.PostLike;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -44,4 +48,10 @@ public class Post extends BaseEntity {
   private String title;
 
   private String content;
+
+  @OneToMany(mappedBy = "post")
+  private List<PostLike> postLikes;
+
+  @OneToMany(mappedBy = "post")
+  private List<Comment> comments;
 }

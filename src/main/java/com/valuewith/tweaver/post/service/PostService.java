@@ -38,7 +38,7 @@ public class PostService {
   private final PostImageService postImageService;
 
   @Transactional
-  public String createPost(PrincipalDetails principalDetails, PostForm postForm,
+  public void createPost(PrincipalDetails principalDetails, PostForm postForm,
       List<MultipartFile> images) {
 
     if (principalDetails == null) {  // 로그인이 안되어 있다면 401
@@ -59,8 +59,6 @@ public class PostService {
     }
 
     postRepository.save(post);
-
-    return "ok";
   }
 
   public PostListResponseDto getFilteredPostList(String area, String title, Pageable pageable) {
@@ -79,8 +77,8 @@ public class PostService {
   }
 
   @Transactional
-  public void updatePostList(PostUpdateForm postUpdateForm, Long memberId) {
-    Post postForUpdate = postRepository.findById(postUpdateForm.getPostId())
+  public void updatePostList(PostUpdateForm postUpdateForm, Long memberId, Long postId) {
+    Post postForUpdate = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND_FOR_UPDATE));
 
     validPostMember(postForUpdate, memberId);  // 401 에러

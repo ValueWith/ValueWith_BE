@@ -10,7 +10,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class PostUpdateForm {
-  private Long postId;
   @NotBlank(message = "제목에 필요한 최소 글자 수를 맞춰주세요.")
   @Size(min = 2, message = "제목에 필요한 최소 글자 수를 맞춰주세요.")
   private String title;

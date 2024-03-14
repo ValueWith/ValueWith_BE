@@ -20,12 +20,19 @@ public class PostResponseDto {
 
   public static PostResponseDto from(Post post) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    int commentsNums = 0, postLikesNums = 0;
+    if (post.getPostLikes() != null) {
+      postLikesNums = post.getPostLikes().size();
+    }
+    if (post.getComments() != null) {
+      commentsNums = post.getComments().size();
+    }
     return PostResponseDto.builder()
         .postId(post.getPostId())
         .title(post.getTitle())
         .content(post.getContent())
-        .commentNumber(post.getComments().size())
-        .postLikeNumber(post.getPostLikes().size())
+        .commentNumber(commentsNums)
+        .postLikeNumber(postLikesNums)
         .createAt(post.getCreatedDateTime().format(formatter))
         .build();
   }

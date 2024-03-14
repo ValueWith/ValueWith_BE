@@ -21,7 +21,8 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
     BooleanBuilder predicate = createConditionWithTitleAndArea(title, area);
     return queryFactory
         .selectFrom(qPost)
-        .leftJoin(qPost.tripGroup, qTripGroup).on(predicate).fetchJoin()
+        .leftJoin(qPost.tripGroup, qTripGroup)
+        .where(predicate).fetchJoin()
         .orderBy(qPost.createdDateTime.desc())
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
@@ -30,11 +31,11 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
 
   private BooleanBuilder createConditionWithTitleAndArea(String title, String area) {
     BooleanBuilder builder = new BooleanBuilder();
-    if (title != null && !title.trim().isEmpty()) {
+    if (title != null && !title.trim().isEmpty() && qPost.title != null) {
       builder.and(qPost.title.eq(title));
     }
-    if (!"all".equalsIgnoreCase(area)) {
-      builder.and(qTripGroup.tripArea.eq(area));
+    if (!"all".equalsIgnoreCase(area) && qPost.tripGroup.tripArea != null) {
+      builder.and(qPost.tripGroup.tripArea.eq(area));
     }
     return builder;
   }

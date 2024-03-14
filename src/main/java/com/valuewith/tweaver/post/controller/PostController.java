@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.post.controller;
 
+import com.valuewith.tweaver.auth.CustomAuthPrincipal;
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.post.dto.PostForm;
 import com.valuewith.tweaver.post.dto.PostListResponseDto;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,12 +36,12 @@ public class PostController {
 
   @PostMapping
   public ResponseEntity<Void> createPost(
-      @AuthenticationPrincipal PrincipalDetails principalDetails,
+      @CustomAuthPrincipal PrincipalDetails principalDetails,
       @RequestPart @Valid PostForm postForm,
       @RequestPart(required = false) List<MultipartFile> images) {
     postService.createPost(principalDetails, postForm, images);
 
-    return ResponseEntity.noContent().build();  // 201
+    return ResponseEntity.status(HttpStatus.CREATED).build();  // 201
   }
 
   @GetMapping("/list")
@@ -54,14 +56,14 @@ public class PostController {
 
   @PatchMapping("/{postId}")
   public ResponseEntity<Void> updatePost(
-      @AuthenticationPrincipal PrincipalDetails principalDetails,
+      @CustomAuthPrincipal PrincipalDetails principalDetails,
       @PathVariable Long postId,
       @RequestBody @Valid PostUpdateForm postUpdateForm
   ) {
 
-    Long memberId = principalDetails.getId();
+    Long memberId = principalDetails.getId();  // [001] 401 unauthorized
     postService.updatePostList(postUpdateForm, memberId, postId);
 
-    return ResponseEntity.noContent().build();  // 201
+    return ResponseEntity.noContent().build();  // 204
   }
 }

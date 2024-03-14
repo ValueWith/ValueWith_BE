@@ -76,4 +76,15 @@ public class GlobalExceptionHandler {
             .status(e.getHttpStatus())
             .body(responseDto);
     }
+
+    @ExceptionHandler(CustomAuthException.class)
+  public ResponseEntity<ErrorResponseDto> handleCustomAuthException(CustomAuthException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    log.warn(e + "");
+    log.warn("CustomAuthenticationPrincipal 인증정보를 가져오지 못했습니다.");
+
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 }

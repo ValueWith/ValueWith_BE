@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @Getter
@@ -120,7 +122,7 @@ public class TokenService {
       Claims claims = parseClaims(token);
       return claims.getExpiration().after(new Date());
     } catch (Exception e) {
-      System.out.println("들어온 token: " + token);
+      log.error("Access Token 값이 잘못되었습니다.");
       throw new CustomException(INVALID_JWT);
     }
   }

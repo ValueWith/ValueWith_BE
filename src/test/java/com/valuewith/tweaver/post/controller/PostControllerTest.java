@@ -62,7 +62,7 @@ public class PostControllerTest {
     이미지 없는 후기작성 성공 테스트
     1. 회원(CustomMockUser)은 tripGroup(id: 1L)을 만든적이 있다.
     2. 회원은 이미지 없이 tripGroup의 후기를 작성한다.
-    3. 예상 결과: 성공
+    3. 예상 결과: 성공 (201 Created)
      */
 
     // Given
@@ -78,7 +78,7 @@ public class PostControllerTest {
             .content(objectMapper.writeValueAsString(postForm)));
 
     // Then
-    postResult.andExpect(status().isOk());  // 200 Ok
+    postResult.andExpect(status().isCreated());  // 201 Ok
   }
 
   @Test
@@ -113,7 +113,7 @@ public class PostControllerTest {
             .content(objectMapper.writeValueAsString(postForm)));
 
     // Then
-    postResult.andExpect(status().isOk());  // 200 Ok
+    postResult.andExpect(status().isCreated());  // 200 Ok
   }
 
   @Test

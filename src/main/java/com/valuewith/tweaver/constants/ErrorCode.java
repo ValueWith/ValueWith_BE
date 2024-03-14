@@ -21,12 +21,14 @@ public enum ErrorCode {
     INVALID_USER_DETAILS("잘못된 접근입니다.", HttpStatus.UNAUTHORIZED),
     NOT_A_MEMBER("해당 그룹원이 아닙니다.", HttpStatus.UNAUTHORIZED),
     UNVALIDATED_REDIRECT_URI("인증에 실패하였습니다.\n(Unauthorized uri)", HttpStatus.UNAUTHORIZED),
+    POST_WRITER_NOT_MATCH("해당 글에 접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
     // 404
     CHAT_ROOM_NOT_FOUND("채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     CHAT_ROOM_NOT_FOUND_FOR_DELETE("삭제하려는 채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     GROUP_NOT_FOUND("그룹을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     GROUP_NOT_FOUND_FOR_DELETE("삭제하려는 그룹을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    POST_NOT_FOUND_FOR_UPDATE("수정하려는 글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // 409
     DUPLICATE_EMAIL("중복된 이메일입니다.", HttpStatus.CONFLICT),
 

@@ -4,6 +4,8 @@ import com.valuewith.tweaver.auditing.BaseEntity;
 import com.valuewith.tweaver.comment.entity.Comment;
 import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.member.entity.Member;
+import com.valuewith.tweaver.post.dto.PostUpdateForm;
+import com.valuewith.tweaver.postImage.entity.PostImage;
 import com.valuewith.tweaver.postLike.entity.PostLike;
 import java.util.List;
 import javax.persistence.Entity;
@@ -54,4 +56,12 @@ public class Post extends BaseEntity {
 
   @OneToMany(mappedBy = "post")
   private List<Comment> comments;
+
+  @OneToMany(mappedBy = "post")
+  private List<PostImage> postImages;
+
+  public void updateFrom(PostUpdateForm postUpdateForm) {
+    this.title = postUpdateForm.getTitle();
+    this.content = postUpdateForm.getContent();
+  }
 }

@@ -1,6 +1,8 @@
 package com.valuewith.tweaver.post.service;
 
 import static com.valuewith.tweaver.constants.ErrorCode.INVALID_USER_DETAILS;
+import static com.valuewith.tweaver.constants.ErrorCode.POST_NOT_FOUND_FOR_UPDATE;
+import static com.valuewith.tweaver.constants.ErrorCode.POST_WRITER_NOT_MATCH;
 
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.exception.CustomException;
@@ -11,10 +13,12 @@ import com.valuewith.tweaver.member.service.MemberService;
 import com.valuewith.tweaver.post.dto.PostForm;
 import com.valuewith.tweaver.post.dto.PostListResponseDto;
 import com.valuewith.tweaver.post.dto.PostResponseDto;
+import com.valuewith.tweaver.post.dto.PostUpdateForm;
 import com.valuewith.tweaver.post.entity.Post;
 import com.valuewith.tweaver.post.repository.PostRepository;
 import com.valuewith.tweaver.postImage.service.PostImageService;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,5 +76,21 @@ public class PostService {
 
     return PostListResponseDto.from(postResponses, pageable.getPageNumber() + 1,
         totalPages, total, isLast);
+  }
+
+  @Transactional
+  public void updatePostList(PostUpdateForm postUpdateForm, Long memberId) {
+    Post postForUpdate = postRepository.findById(postUpdateForm.getPostId())
+        .orElseThrow(() -> new CustomException(POST_NOT_FOUND_FOR_UPDATE));
+
+    validPostMember(postForUpdate, memberId);  // 401 에러
+
+    postForUpdate.updateFrom(postUpdateForm);
+  }
+
+  private void validPostMember(Post postForUpdate, Long memberId) {
+    if (!Objects.equals(postForUpdate.getMember().getMemberId(), memberId)) {
+      throw new CustomException(POST_WRITER_NOT_MATCH);
+    }
   }
 }

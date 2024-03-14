@@ -2,6 +2,8 @@ package com.valuewith.tweaver.bookmark.controller;
 
 import com.valuewith.tweaver.bookmark.service.BookmarkService;
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.config.SwaggerConfig;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//@Api(tags = {SwaggerConfig.CHAT_TAG})
+@Api(tags = {SwaggerConfig.BOOKMARK_TAG})
 @RestController
 @RequestMapping("/bookmark")
 @RequiredArgsConstructor

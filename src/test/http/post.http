@@ -37,3 +37,22 @@ Content-Type: application/json
   "content": "content",
   "tripGroupId": 1
 }
+
+
+### Read post list 기본
+GET http://localhost:8080/post/list
+
+
+### Read post list 부산
+GET http://localhost:8080/post/list?area=busan
+
+
+### Update post (로그인 후)
+PATCH http://localhost:8080/post/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJ...
+
+{
+  "title": "new title",
+  "content": "new content"
+}

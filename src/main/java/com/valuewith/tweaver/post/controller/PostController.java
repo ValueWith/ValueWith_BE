@@ -39,7 +39,9 @@ public class PostController {
       @CustomAuthPrincipal PrincipalDetails principalDetails,
       @RequestPart @Valid PostForm postForm,
       @RequestPart(required = false) List<MultipartFile> images) {
-    postService.createPost(principalDetails, postForm, images);
+
+    Long memberId = principalDetails.getId();  // [001] 401 unauthorized
+    postService.createPost(memberId, postForm, images);
 
     return ResponseEntity.status(HttpStatus.CREATED).build();  // 201
   }

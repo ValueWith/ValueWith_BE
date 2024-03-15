@@ -1,10 +1,8 @@
 package com.valuewith.tweaver.post.service;
 
-import static com.valuewith.tweaver.constants.ErrorCode.INVALID_USER_DETAILS;
 import static com.valuewith.tweaver.constants.ErrorCode.POST_NOT_FOUND_FOR_UPDATE;
 import static com.valuewith.tweaver.constants.ErrorCode.POST_WRITER_NOT_MATCH;
 
-import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.exception.CustomException;
 import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.service.TripGroupService;
@@ -38,13 +36,10 @@ public class PostService {
   private final PostImageService postImageService;
 
   @Transactional
-  public void createPost(PrincipalDetails principalDetails, PostForm postForm,
+  public void createPost(Long memberId, PostForm postForm,
       List<MultipartFile> images) {
 
-    if (principalDetails == null) {  // 로그인이 안되어 있다면 401
-      throw new CustomException(INVALID_USER_DETAILS);
-    }
-    Member postCreator = memberService.findMemberByEmail(principalDetails.getUsername());
+    Member postCreator = memberService.findMemberByMemberId(memberId);
     TripGroup trip = tripGroupService.findTripByTripGroupId(postForm.getTripGroupId());
 
     Post post = Post.builder()

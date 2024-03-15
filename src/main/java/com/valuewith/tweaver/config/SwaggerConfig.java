@@ -1,10 +1,13 @@
 package com.valuewith.tweaver.config;
 
+import com.valuewith.tweaver.auth.CustomAuthenticationPrincipalArgumentResolver;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -89,5 +92,11 @@ public class SwaggerConfig implements WebMvcConfigurer {
         .description("Tweaver API 명세서입니다.")
         .version("v0.1")
         .build();
+  }
+
+  // CustomAuthPrincipal 어노테이션 관련 메서드
+  @Override
+  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    resolvers.add(new CustomAuthenticationPrincipalArgumentResolver());
   }
 }

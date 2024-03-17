@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.post.service;
 
+import static com.valuewith.tweaver.constants.ErrorCode.POST_NOT_FOUND_FOR_DELETE;
 import static com.valuewith.tweaver.constants.ErrorCode.POST_NOT_FOUND_FOR_UPDATE;
 import static com.valuewith.tweaver.constants.ErrorCode.POST_WRITER_NOT_MATCH;
 
@@ -72,7 +73,7 @@ public class PostService {
   }
 
   @Transactional
-  public void updatePostList(PostUpdateForm postUpdateForm, Long memberId, Long postId) {
+  public void updatePost(PostUpdateForm postUpdateForm, Long memberId, Long postId) {
     Post postForUpdate = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND_FOR_UPDATE));
 
@@ -81,9 +82,26 @@ public class PostService {
     postForUpdate.updateFrom(postUpdateForm);
   }
 
-  private void validPostMember(Post postForUpdate, Long memberId) {
-    if (!Objects.equals(postForUpdate.getMember().getMemberId(), memberId)) {
+  @Transactional
+  public void deletePostList(Long memberId, Long postId) {
+    log.debug("포스트 삭제 중");
+    Post postForDelete = findPostForDelete(postId);
+
+    validPostMember(postForDelete, memberId);
+    log.debug("포스트 삭제 검증 완료");
+
+    postRepository.delete(postForDelete);
+    postImageService.deleteImageList(postForDelete);
+  }
+
+  private void validPostMember(Post post, Long memberId) {
+    if (!Objects.equals(post.getMember().getMemberId(), memberId)) {
       throw new CustomException(POST_WRITER_NOT_MATCH);
     }
+  }
+
+  private Post findPostForDelete(Long postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(POST_NOT_FOUND_FOR_DELETE));
   }
 }

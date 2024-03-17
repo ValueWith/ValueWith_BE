@@ -33,6 +33,7 @@ public enum ErrorCode {
     GROUP_NOT_FOUND("그룹을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     GROUP_NOT_FOUND_FOR_DELETE("삭제하려는 그룹을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     POST_NOT_FOUND_FOR_UPDATE("수정하려는 글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    POST_NOT_FOUND_FOR_DELETE("삭제하려는 글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // 409
     DUPLICATE_EMAIL("중복된 이메일입니다.", HttpStatus.CONFLICT),
 
@@ -45,6 +46,7 @@ public enum ErrorCode {
 
     // 502
     FAILURE_SAVE_IMAGE("이미지를 확인해주세요.", HttpStatus.BAD_GATEWAY),
+    FAILURE_DELETE_IMAGE("이미지를 삭제에 실패하였습니다.", HttpStatus.BAD_GATEWAY),
     FAILURE_SENDING_EMAIL("이메일 전송에 실패하였습니다.", HttpStatus.BAD_GATEWAY),
     FAILURE_GETTING_PROFILE_IMG("프로필 이미지가 없습니다.", HttpStatus.BAD_GATEWAY)
     ;

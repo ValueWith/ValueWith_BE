@@ -155,4 +155,21 @@ public class ImageService {
         defaultImageRepository.save(defaultImage);
         return imageUrl;
     }
+
+    public void deleteImageFile(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new UrlEmptyException(ErrorCode.URL_IS_EMPTY);
+        }
+
+        String imageKey = generateKey(imageUrl);
+
+        if (!amazonS3.doesObjectExist(bucketName, imageKey)) {
+            throw new S3ImageNotFoundException(ErrorCode.S3_IMAGE_NOT_FOUND);
+        }
+
+        boolean exists = defaultImageRepository.existsDefaultImageByImageName(imageUrl);
+        if(!exists) {
+            amazonS3.deleteObject(bucketName, imageKey);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.valuewith.tweaver.postImage.entity;
 
 import com.valuewith.tweaver.post.entity.Post;
+import com.valuewith.tweaver.postImage.dto.PostImageDto;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,4 +32,11 @@ public class PostImage {
   private Post post;
 
   private String postImageUrl;
+
+  public static PostImage from(PostImageDto postImageDto) {
+    return PostImage.builder()
+        .post(postImageDto.getPost())
+        .postImageUrl(postImageDto.getPostImageUrl())
+        .build();
+  }
 }

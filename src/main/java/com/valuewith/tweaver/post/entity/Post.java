@@ -32,7 +32,7 @@ import org.hibernate.annotations.Where;
 @ToString
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE comment SET IS_DELETED = 1 WHERE POST_ID = ?")
+@SQLDelete(sql = "UPDATE post SET IS_DELETED = 1 WHERE POST_ID = ?")
 @Where(clause = "IS_DELETED = 0")
 public class Post extends BaseEntity {
   @Id

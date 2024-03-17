@@ -1,8 +1,6 @@
 package com.valuewith.tweaver.postImage.dto;
 
-import com.valuewith.tweaver.post.dto.PostForm;
 import com.valuewith.tweaver.post.entity.Post;
-import com.valuewith.tweaver.postImage.entity.PostImage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +13,10 @@ import lombok.NoArgsConstructor;
 public class PostImageDto {
 
   private String postImageUrl;
-  private PostForm post;
+  private Post post;
 
-  public PostImage setPostImageUrlAndPost(String postImageUrl, Post post) {
-    return PostImage.builder()
+  public PostImageDto setPostImageUrlAndPost(String postImageUrl, Post post) {
+    return PostImageDto.builder()
         .postImageUrl(postImageUrl)
         .post(post)
         .build();

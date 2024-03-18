@@ -1,8 +1,7 @@
 package com.valuewith.tweaver.commons.security.service;
 
-import static com.valuewith.tweaver.constants.ErrorCode.*;
+import static com.valuewith.tweaver.constants.ErrorCode.INVALID_JWT;
 
-import com.valuewith.tweaver.constants.ErrorCode;
 import com.valuewith.tweaver.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,9 +16,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

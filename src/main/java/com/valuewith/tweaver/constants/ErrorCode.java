@@ -46,7 +46,7 @@ public enum ErrorCode {
 
     // 502
     FAILURE_SAVE_IMAGE("이미지를 확인해주세요.", HttpStatus.BAD_GATEWAY),
-    FAILURE_DELETE_IMAGE("이미지를 삭제에 실패하였습니다.", HttpStatus.BAD_GATEWAY),
+    FAILURE_DELETE_IMAGE("이미지 삭제에 실패하였습니다.", HttpStatus.BAD_GATEWAY),
     FAILURE_SENDING_EMAIL("이메일 전송에 실패하였습니다.", HttpStatus.BAD_GATEWAY),
     FAILURE_GETTING_PROFILE_IMG("프로필 이미지가 없습니다.", HttpStatus.BAD_GATEWAY)
     ;

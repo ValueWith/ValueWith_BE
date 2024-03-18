@@ -2,13 +2,11 @@ package com.valuewith.tweaver.postImage.service;
 
 import static com.valuewith.tweaver.constants.ErrorCode.FAILURE_DELETE_IMAGE;
 import static com.valuewith.tweaver.constants.ErrorCode.IMAGE_SAVE_ERROR;
-import static com.valuewith.tweaver.constants.ErrorCode.POST_NOT_FOUND_FOR_DELETE;
 import static com.valuewith.tweaver.constants.ErrorCode.POST_WRITER_NOT_MATCH;
 
 import com.valuewith.tweaver.constants.ImageType;
 import com.valuewith.tweaver.defaultImage.service.ImageService;
 import com.valuewith.tweaver.exception.CustomException;
-import com.valuewith.tweaver.member.service.MemberService;
 import com.valuewith.tweaver.post.entity.Post;
 import com.valuewith.tweaver.post.repository.PostRepository;
 import com.valuewith.tweaver.postImage.dto.PostImageDto;
@@ -30,7 +28,6 @@ public class PostImageService {
 
   private final ImageService imageService;
   private final PostImageRepository postImageRepository;
-  private final PostRepository postRepository;
 
   public void saveImageList(List<MultipartFile> images, Post post) {
     try {
@@ -59,7 +56,7 @@ public class PostImageService {
       log.info("포스트 이미지 삭제중 - " + postForDelete.getTitle());
       List<PostImage> postImageList = postForDelete.getPostImages();
 
-      if (postImageList.isEmpty()) {
+      if (postImageList == null || postImageList.isEmpty()) {
         log.info("포스트 이미지 없음");
         postImageRepository.deleteAll(postImageList);
         log.info("포스트 이미지 삭제 완료 - " + postForDelete.getTitle());
@@ -76,12 +73,6 @@ public class PostImageService {
     } catch (Exception e) {
       log.error(e.getMessage());
       throw new CustomException(FAILURE_DELETE_IMAGE);
-    }
-  }
-
-  private void validPostMember(Post post, Long memberId) {
-    if (!Objects.equals(post.getMember().getMemberId(), memberId)) {
-      throw new CustomException(POST_WRITER_NOT_MATCH);
     }
   }
 }

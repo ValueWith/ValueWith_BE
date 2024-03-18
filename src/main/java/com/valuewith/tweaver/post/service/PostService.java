@@ -83,7 +83,7 @@ public class PostService {
   }
 
   @Transactional
-  public void deletePostList(Long memberId, Long postId) {
+  public void deletePost(Long memberId, Long postId) {
     log.debug("포스트 삭제 중");
     Post postForDelete = findPostForDelete(postId);
 
@@ -96,12 +96,12 @@ public class PostService {
 
   private void validPostMember(Post post, Long memberId) {
     if (!Objects.equals(post.getMember().getMemberId(), memberId)) {
-      throw new CustomException(POST_WRITER_NOT_MATCH);
+      throw new CustomException(POST_WRITER_NOT_MATCH);  // 401
     }
   }
 
   private Post findPostForDelete(Long postId) {
     return postRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(POST_NOT_FOUND_FOR_DELETE));
+        .orElseThrow(() -> new CustomException(POST_NOT_FOUND_FOR_DELETE));  // 404
   }
 }

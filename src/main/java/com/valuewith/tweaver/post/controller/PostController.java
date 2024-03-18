@@ -76,7 +76,7 @@ public class PostController {
   ) {
 
     Long memberId = principalDetails.getId();  // [001] 401 unauthorized
-    postService.deletePostList(memberId, postId);
+    postService.deletePost(memberId, postId);
 
     return ResponseEntity.noContent().build();  // 204
   }

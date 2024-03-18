@@ -1,5 +1,7 @@
 package com.valuewith.tweaver.commons;
 
+import com.valuewith.tweaver.constants.ErrorCode;
+import com.valuewith.tweaver.exception.CustomAuthException;
 import com.valuewith.tweaver.member.entity.Member;
 import java.util.Collection;
 import java.util.Map;
@@ -46,6 +48,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
   @Override
   public String getUsername() {
+    if (member == null) {
+      throw new CustomAuthException(ErrorCode.INVALID_CUSTOM_ID);  // [002] 401 unauthorized
+    }
     return member.getEmail();
   }
 
@@ -72,6 +77,16 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
   // OAuth2 인터페이스 메소드
   @Override
   public String getName() {
+    if (member == null) {
+      throw new CustomAuthException(ErrorCode.INVALID_CUSTOM_NAME);  // [003] 401 unauthorized
+    }
     return member.getEmail();
+  }
+
+  public Long getId() {
+    if (member == null) {
+      throw new CustomAuthException(ErrorCode.INVALID_CUSTOM_ID);  // [001] 401 unauthorized
+    }
+    return member.getMemberId();
   }
 }

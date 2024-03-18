@@ -94,7 +94,9 @@ public class SecurityConfig {
                 "/member",
                 "/oauth2/**",
                 "/calendar/**",
-                "/bookmark/**"
+                "/bookmark/**",
+                "/post",
+                "/post/**"
             )
             .permitAll()
             // 회원만 들어갈 수 있는 API는 현재 Security에서 거르지 못합니다.

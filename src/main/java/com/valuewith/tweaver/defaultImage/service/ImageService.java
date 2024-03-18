@@ -46,8 +46,10 @@ public class ImageService {
      *  PROFILE("profile/")
      *  THUMBNAIL("thumbnail/")
      *  LOCATION("location/")
+     *  POST("post/")
      *  예: user.setProfileUrl(imageService.uploadImageAndGetUrl(file,ImageType.PROFILE))
      *  예: location.setThumbnailUrl(imageService.uploadImageAndGetUrl(file, ImageType.THUMBNAIL))
+     *  예: post.setImageUrl(imageService.uploadImageAndGetUrl(file,ImageType.POST))
      */
     public String uploadImageAndGetUrl(MultipartFile file, ImageType imageType) {
         if (file.isEmpty()) {
@@ -152,5 +154,22 @@ public class ImageService {
 
         defaultImageRepository.save(defaultImage);
         return imageUrl;
+    }
+
+    public void deleteImageFile(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new UrlEmptyException(ErrorCode.URL_IS_EMPTY);
+        }
+
+        String imageKey = generateKey(imageUrl);
+
+        if (!amazonS3.doesObjectExist(bucketName, imageKey)) {
+            throw new S3ImageNotFoundException(ErrorCode.S3_IMAGE_NOT_FOUND);
+        }
+
+        boolean exists = defaultImageRepository.existsDefaultImageByImageName(imageUrl);
+        if(!exists) {
+            amazonS3.deleteObject(bucketName, imageKey);
+        }
     }
 }

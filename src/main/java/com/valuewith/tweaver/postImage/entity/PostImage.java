@@ -1,6 +1,7 @@
 package com.valuewith.tweaver.postImage.entity;
 
 import com.valuewith.tweaver.post.entity.Post;
+import com.valuewith.tweaver.postImage.dto.PostImageDto;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,11 +25,18 @@ import lombok.experimental.SuperBuilder;
 public class PostImage {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long post_image_id;
+  private Long postImageId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")
   private Post post;
 
   private String postImageUrl;
+
+  public static PostImage from(PostImageDto postImageDto) {
+    return PostImage.builder()
+        .post(postImageDto.getPost())
+        .postImageUrl(postImageDto.getPostImageUrl())
+        .build();
+  }
 }

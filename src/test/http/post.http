@@ -56,3 +56,8 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJ...
   "title": "new title",
   "content": "new content"
 }
+
+
+### Delete post (로그인 후)
+DELETE http://localhost:8080/post/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJ...

@@ -1,13 +1,18 @@
 package com.valuewith.tweaver.post.controller;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.group.entity.TripGroup;
 import com.valuewith.tweaver.group.service.TripGroupService;
+import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
 import com.valuewith.tweaver.post.dto.PostForm;
+import com.valuewith.tweaver.post.entity.Post;
+import com.valuewith.tweaver.post.repository.PostRepository;
 import com.valuewith.tweaver.post.service.PostService;
 import com.valuewith.tweaver.postImage.service.PostImageService;
 import com.valuewith.tweaver.user.WithCustomMockUser;
@@ -47,6 +52,9 @@ public class PostControllerTest {
 
   @MockBean
   MemberRepository memberRepository;
+
+  @MockBean
+  PostRepository postRepository;
 
   PostForm postForm = PostForm.builder()
       .tripGroupId(1L)
@@ -137,6 +145,52 @@ public class PostControllerTest {
             .file(postFormFile)
             .with(csrf())
             .content(objectMapper.writeValueAsString(postForm)));
+
+    // Then
+    postResult.andExpect(status().isFound());  // 302 Found
+  }
+
+  @Test
+  @WithCustomMockUser(username = "james")
+  @DisplayName("로그인 후 삭제 성공")
+  void deletePostSuccess204() throws Exception {
+    Post jamesPost = Post.builder()
+        .postId(1L)
+        .title("james's post")
+        .content("여행은 즐거웠다.")
+        .member(Member.builder().memberId(1L).build())
+        .tripGroup(TripGroup.builder().build())
+        .postImages(null)
+        .build();
+
+    // Given
+    postRepository.save(jamesPost);
+
+    // When
+    ResultActions postResult = mockMvc.perform(delete("/post/1").with(csrf()));
+
+    // Then
+    postResult.andExpect(status().isNoContent());  // 204 NoContent
+  }
+
+  @Test
+  @WithAnonymousUser
+  @DisplayName("인증되지 않은 상태에서 후기삭제시 로그인 페이지로 이동")
+  void deletePostFail302() throws Exception {
+    Post jamesPost = Post.builder()
+        .postId(1L)
+        .title("james's post")
+        .content("여행은 즐거웠다.")
+        .member(Member.builder().memberId(1L).build())
+        .tripGroup(TripGroup.builder().build())
+        .postImages(null)
+        .build();
+
+    // Given
+    postRepository.save(jamesPost);
+
+    // When
+    ResultActions postResult = mockMvc.perform(delete("/post/1").with(csrf()));
 
     // Then
     postResult.andExpect(status().isFound());  // 302 Found

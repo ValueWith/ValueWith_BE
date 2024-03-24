@@ -57,7 +57,7 @@ public class CustomAuthenticationPrincipalArgumentResolver implements
         throw new ClassCastException(
             principal + " is not assignable to " + parameter.getParameterType());
       }
-      throw new CustomAuthException(ErrorCode.NO_PRINCIPAL);  // [100] 401 unauthorized
+      throw new CustomAuthException(ErrorCode.INVALID_USER_DETAILS);  // [200] 401 unauthorized
     }
     return principal;
   }

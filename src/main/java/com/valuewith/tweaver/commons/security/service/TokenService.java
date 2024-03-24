@@ -1,12 +1,15 @@
 package com.valuewith.tweaver.commons.security.service;
 
-import static com.valuewith.tweaver.constants.ErrorCode.INVALID_JWT;
 
-import com.valuewith.tweaver.exception.CustomException;
+import com.valuewith.tweaver.constants.ErrorCode;
+import com.valuewith.tweaver.exception.CustomAuthException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
@@ -17,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Component
@@ -41,10 +44,10 @@ public class TokenService {
 
   private final PrincipalService principalService;
 
-  /**
-   * Access 토큰을 생성합니다. 페이로드에 들어갈 기본적인 정보는 다음과 같습니다. 1. subject: Access 2. expiration: 1시간 3. claim:
-   * email 변경사항 있을시에 claims에 put(클레임 이름, 값) 형식으로 추가해주세요. 클레임 이름은 상수로 추가해주세요. (파싱에서 사용)
-   */
+  /*
+  Access 토큰을 생성합니다. 페이로드에 들어갈 기본적인 정보는 다음과 같습니다. 1. subject: Access 2. expiration: 1시간 3. claim:
+  email 변경사항 있을시에 claims에 put(클레임 이름, 값) 형식으로 추가해주세요. 클레임 이름은 상수로 추가해주세요. (파싱에서 사용)
+  */
   public String createAccessToken(String email, Long memberId) {
     Claims claims = Jwts.claims().setSubject(ACCESS_SUBJECT);
     claims.put(CLAIM_EMAIL, email);
@@ -61,10 +64,10 @@ public class TokenService {
         .compact();
   }
 
-  /**
-   * Refresh 토큰을 생성합니다. 페이로드에 들어갈 기본적인 정보는 다음과 같습니다. 1. subject: Refresh 2. expiration: 7일(1주)
-   * Refresh 토큰에는 별도의 클레임이 들어가지 않습니다.
-   */
+  /*
+  Refresh 토큰을 생성합니다. 페이로드에 들어갈 기본적인 정보는 다음과 같습니다. 1. subject: Refresh 2. expiration: 7일(1주)
+  Refresh 토큰에는 별도의 클레임이 들어가지 않습니다.
+  */
   public String createRefreshToken() {
     Claims claims = Jwts.claims().setSubject(REFRESH_SUBJECT);
     Date now = new Date();
@@ -79,71 +82,130 @@ public class TokenService {
 
   /**
    * 토큰의 이메일 정보를 가져옵니다.
+   * 주의사항: JwtAuthenticationFilter 에서 사용합니다. 이외의 곳에선 사용하지 말아주세요
+   *
+   * @param token Bearer가 포함된 토큰
+   * @return token에 포함된 Email 정보
+   */
+  public String getMemberEmailForFilter(String token) {
+    log.info("getMemberEmailForFilter - Authorization: " + token);
+    String trimmedToken = resolveTokenOnlyAtTokenService(token);
+    return this.parseClaimsForFilter(trimmedToken).get(CLAIM_EMAIL).toString();
+  }
+
+  /**
+   * 토큰의 이메일 정보를 반환합니다.
+   * (@CustomAuthPrincipal 어노테이션 사용을 권장합니다.)
+   *
+   * @param token Bearer가 포함된 토큰
+   * @return token에 포함된 Email 정보
    */
   public String getMemberEmail(String token) {
-    try {
-      if (StringUtils.hasText(token) && token.startsWith(BEARER)) {
-        token = token.replace(BEARER, "");
-      }
-      return this.parseClaims(token).get(CLAIM_EMAIL).toString();
-    } catch (Exception e) {
-      System.out.println("들어온 token: " + token);
-      throw new CustomException(INVALID_JWT);
-    }
+    log.info("getMemberEmail - Authorization: " + token);
+    String trimmedToken = resolveTokenOnlyAtTokenService(token);
+    return this.parseClaims(trimmedToken).get(CLAIM_EMAIL).toString();
   }
 
   /**
-   * 토큰의 멤버 아이디 정보를 가져옵니다.
+   * 토큰의 멤버 id 정보를 반환합니다.
+   * (@CustomAuthPrincipal 어노테이션 사용을 권장합니다.)
+   *
+   * @param token Bearer가 포함된 토큰
+   * @return token에 포함된 Email 정보
    */
   public Long getMemberId(String token) {
-    try {
-      if (StringUtils.hasText(token) && token.startsWith(BEARER)) {
-        token = token.replace(BEARER, "");
-      }
-      return Long.parseLong(this.parseClaims(token).get(CLAIM_MEMBER_ID).toString());
-    } catch (Exception e) {
-      System.out.println("들어온 token: " + token);
-      throw new CustomException(INVALID_JWT);
+    log.info("getMemberId - Authorization: " + token);
+    String trimmedToken = resolveTokenOnlyAtTokenService(token);
+    return Long.parseLong(this.parseClaims(trimmedToken).get(CLAIM_MEMBER_ID).toString());
+  }
+
+  public String resolveTokenOnlyAtTokenService(String token) {
+    if (ObjectUtils.isEmpty(token)) {
+      return null;
     }
+    if (!token.startsWith(BEARER)) {
+      return null;
+    }
+    return token.replace(BEARER, "");
   }
 
   /**
-   * 토큰의 유효시간을 검증합니다.
+   * 주어진 토큰의 claims에 포함된 만료시간이 남아있다면 true를 반환합니다.
+   * Jwt가 반환하는 예외를 로그로 남깁니다.
+   *
+   * @param trimmedToken 검증할 token
+   * @return 유효한 토큰이면 true, 만료된 토큰이면 false
    */
-  public Boolean isValidToken(String token) {
+  public boolean isValidToken(String trimmedToken) {
     try {
-      if (!StringUtils.hasText(token)) {
-        return Boolean.FALSE;
-      }
-      Claims claims = parseClaims(token);
-      return claims.getExpiration().after(new Date());
-    } catch (Exception e) {
-      log.error("Access Token 값이 잘못되었습니다.");
-      throw new CustomException(INVALID_JWT);
-    }
-  }
-
-  /**
-   * token을 해독하여 claim값들을 반환합니다.
-   */
-  private Claims parseClaims(String token) {
-    try {
-      return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
+      Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(trimmedToken);
+      return true;
+    } catch (MalformedJwtException e) {
+      log.error("isValidToken: [MalFormed] 잘못된 인증 정보");
+    } catch (SignatureException e) {
+      log.error("isValidToken: [Signature] 잘못된 접근");
     } catch (ExpiredJwtException e) {
+      log.error("isValidToken: [Expired] 만료된 접근");
+    } catch (UnsupportedJwtException e) {
+      log.error("isValidToken: [Unsupported] 잘못된 접근");
+    } catch (IllegalArgumentException e) {
+      log.error("isValidToken: [Illegal] 잘못된 인증 정보");
+    }
+    return false;
+  }
+
+  /**
+   * 주어진 토큰을 해독하여 claim값들을 반환합니다.
+   * 사용시 클라이언트에 CustomAuthException을 던집니다.
+   *
+   * @param trimmedToken Bearer가 제거된 토큰
+   * @return Jwt가 가지고 있는 Claims 정보
+   * @throws CustomAuthException Jwt 예외와 동일
+   */
+  private Claims parseClaims(String trimmedToken) {
+    try {
+      return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(trimmedToken).getBody();
+    } catch (MalformedJwtException e) {
+      log.error("parseClaims: [MalFormed] 잘못된 인증 정보");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_M);
+    } catch (SignatureException e) {
+      log.error("parseClaims: [Signature] 잘못된 접근");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_S);
+    } catch (ExpiredJwtException e) {
+      log.error("parseClaims: [Expired] 만료된 접근");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_E);
+    } catch (UnsupportedJwtException e) {
+      log.error("parseClaims: [Unsupported] 잘못된 접근");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_U);
+    } catch (IllegalArgumentException e) {
+      log.error("parseClaims: [Illegal] 잘못된 인증 정보");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_I);
+    }
+  }
+
+  /**
+   * JwtAuthenticationFileter에서 사용됩니다.
+   * 주어진 토큰을 해독하여 claim값들을 반환합니다.
+   * 사용시 Jwt 예외 로그를 남깁니다.
+   *
+   * @param trimmedToken Bearer가 제거된 토큰
+   * @return Jwt가 가지고 있는 Claims 정보
+   */
+  private Claims parseClaimsForFilter(String trimmedToken) {
+    try {
+      return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(trimmedToken).getBody();
+    } catch (ExpiredJwtException e) {
+      log.error("parseClaimsForFilter: [Expired] 만료된 접근");
       return e.getClaims();
     }
   }
 
-  /**
-   * 헤더에 Authorization: "Bearer {token}" 형식으로 오게 됩니다.
-   * 이때 "Bearer "를 지우고 "{token}" 값으로 파싱합니다.
+  /*
+   헤더에 Authorization: "Bearer {token}" 형식으로 오게 됩니다. 이때 "Bearer "를 지우고 "{token}" 값으로 파싱합니다.
    */
   public String parseAccessToken(HttpServletRequest request) {
     String fullToken = request.getHeader(accessHeader);
-    if (StringUtils.hasText(fullToken) && fullToken.startsWith(BEARER)) {
-      return fullToken.replace(BEARER, "");
-    }
-    return "";  // TODO: 204 얘정 -eod940.23.11.20
+    return resolveTokenOnlyAtTokenService(fullToken);
   }
 
   public Optional<String> parseRefreshToken(HttpServletRequest request) {

@@ -15,73 +15,73 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoFileProvidedException.class)
-    public ResponseEntity<ErrorResponseDto> handleNoFileProvidedException(
-        NoFileProvidedException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(NoFileProvidedException.class)
+  public ResponseEntity<ErrorResponseDto> handleNoFileProvidedException(
+      NoFileProvidedException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(InvalidFileMediaTypeException.class)
-    public ResponseEntity<ErrorResponseDto> handleInvalidFileMediaTypeException(
-        InvalidFileMediaTypeException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(InvalidFileMediaTypeException.class)
+  public ResponseEntity<ErrorResponseDto> handleInvalidFileMediaTypeException(
+      InvalidFileMediaTypeException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(S3ImageNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleS3ImageNotFoundException(
-        S3ImageNotFoundException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(S3ImageNotFoundException.class)
+  public ResponseEntity<ErrorResponseDto> handleS3ImageNotFoundException(
+      S3ImageNotFoundException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(UrlEmptyException.class)
-    public ResponseEntity<ErrorResponseDto> handleUrlEmptyException(UrlEmptyException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(UrlEmptyException.class)
+  public ResponseEntity<ErrorResponseDto> handleUrlEmptyException(UrlEmptyException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(LocationNameEmptyException.class)
-    public ResponseEntity<ErrorResponseDto> handleLocationNameEmptyException(
-        LocationNameEmptyException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(LocationNameEmptyException.class)
+  public ResponseEntity<ErrorResponseDto> handleLocationNameEmptyException(
+      LocationNameEmptyException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponseDto> handleCustomException(
-        CustomException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(CustomException.class)
+  public ResponseEntity<ErrorResponseDto> handleCustomException(
+      CustomException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(SocialLoginFailureException.class)
-    public ResponseEntity<ErrorResponseDto> handleSocialLoginFailureException(
-        SocialLoginFailureException e) {
-        ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body(responseDto);
-    }
+  @ExceptionHandler(SocialLoginFailureException.class)
+  public ResponseEntity<ErrorResponseDto> handleSocialLoginFailureException(
+      SocialLoginFailureException e) {
+    ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(responseDto);
+  }
 
-    @ExceptionHandler(CustomAuthException.class)
+  @ExceptionHandler(CustomAuthException.class)
   public ResponseEntity<ErrorResponseDto> handleCustomAuthException(CustomAuthException e) {
     ErrorResponseDto responseDto = ErrorResponseDto.from(e.getErrorCode());
-    log.warn(e + "");
-    log.warn("CustomAuthenticationPrincipal 인증정보를 가져오지 못했습니다.");
+    log.error(e + "");
+    log.error("CustomAuthenticationPrincipal 인증정보를 가져오지 못했습니다.");
 
     return ResponseEntity
         .status(e.getHttpStatus())

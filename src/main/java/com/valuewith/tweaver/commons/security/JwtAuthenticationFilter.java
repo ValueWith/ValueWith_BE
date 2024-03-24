@@ -10,17 +10,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -35,12 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
+
     String token = resolveTokenFromRequest(request);
 
     // 토큰이 올바르다면 인증 정보를 Context에 저장하는 과정이 추가
     if (request.getRequestURI().equals("/auth/signin")
-        && StringUtils.hasText(token)
-        && tokenService.isValidToken(token)) {
+        && isValidToken(token)) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -65,7 +64,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       AccessToken이 없거나 유효하지 않다면 -> 403
       AccessToken이 있고 유효하다면 -> 200
      */
-    authenticateAccessToken(request, response, filterChain);
+    authenticateAccessToken(request);
+    filterChain.doFilter(request, response);
+  }
+
+  private Boolean isValidToken(String token) {
+    return tokenService.isValidToken(token);
   }
 
   /**
@@ -74,12 +78,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private String resolveTokenFromRequest(HttpServletRequest request) {
     String token = request.getHeader(TOKEN_HEADER);
 
-    // 토큰에서 "Bearer "를 없엔 뒤 토큰 값만 추출
-    if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
-      return token.substring(TOKEN_PREFIX.length());
+    if (ObjectUtils.isEmpty(token)) {
+      return null;
     }
-
-    return null;
+    if (!token.startsWith(TOKEN_PREFIX)) {
+      return null;
+    }
+    // 토큰에서 "Bearer "를 없엔 뒤 토큰 값만 추출
+    return token.substring(TOKEN_PREFIX.length());
   }
 
   public void reissueAccessTokenAfterRefreshToken(HttpServletResponse response,
@@ -95,14 +101,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     );
   }
 
-  public void authenticateAccessToken(HttpServletRequest request,
-      HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+  public void authenticateAccessToken(HttpServletRequest request)
+      throws ServletException, IOException {
     String token = tokenService.parseAccessToken(request);
-    if (token != null && tokenService.isValidToken(token)) {
-      String email = tokenService.getMemberEmail(token);
+    if (token != null && isValidToken(token)) {
+      String email = tokenService.getMemberEmailForFilter(token);
       memberRepository.findByEmail(email).ifPresent(this::saveAuthentication);
     }
-    filterChain.doFilter(request, response);
   }
 
   private String reissueRefreshToken(Member member) {

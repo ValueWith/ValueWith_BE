@@ -2,6 +2,8 @@ package com.valuewith.tweaver.commons.security;
 
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.commons.security.service.TokenService;
+import com.valuewith.tweaver.constants.ErrorCode;
+import com.valuewith.tweaver.exception.CustomAuthException;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
 import java.io.IOException;
@@ -35,57 +37,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    String token = resolveTokenFromRequest(request);
-
-    // 토큰이 올바르다면 인증 정보를 Context에 저장하는 과정이 추가
-    if (request.getRequestURI().equals("/auth/signin")
-        && isValidToken(token)) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
-    // 리프레시 토큰이 유효한지 검증합니다.
-    String refreshToken = tokenService
-        .parseRefreshToken(request)
-        .filter(tokenService::isValidToken)
-        .orElse(null);
+    try {
+      // 리프레시 토큰이 유효한지 검증합니다.
+      String refreshToken = tokenService
+          .parseRefreshToken(request)
+          .filter(tokenService::isValidToken)
+          .orElse(null);
 
     /*
       헤더에 리프레시 토큰이 존재 -> 사용자 AccessToken 만료
       받은 리프레시 토큰을 DB와 비교 후 재발급 진행
      */
-    if (refreshToken != null) {
-      reissueAccessTokenAfterRefreshToken(response, refreshToken);
-      return;
-    }
+      if (refreshToken != null) {
+        reissueAccessTokenAfterRefreshToken(response, refreshToken);
+        return;
+      }
 
     /*
       리프레시 토큰이 없거나 유효하지 않다면 사용자 AccessToken 검사가 필요하다.
       AccessToken이 없거나 유효하지 않다면 -> 403
       AccessToken이 있고 유효하다면 -> 200
      */
-    authenticateAccessToken(request);
+      authenticateAccessToken(request);
+    } catch (Exception e) {
+      request.setAttribute("exception", e);
+    }
     filterChain.doFilter(request, response);
   }
 
-  private Boolean isValidToken(String token) {
-    return tokenService.isValidToken(token);
-  }
-
-  /**
-   * 클라이언트에서는 로그인 이후 request headers에 Authorization: Bearer {token} 값이 추가되어야 합니다.
-   */
-  private String resolveTokenFromRequest(HttpServletRequest request) {
-    String token = request.getHeader(TOKEN_HEADER);
-
-    if (ObjectUtils.isEmpty(token)) {
-      return null;
-    }
-    if (!token.startsWith(TOKEN_PREFIX)) {
-      return null;
-    }
-    // 토큰에서 "Bearer "를 없엔 뒤 토큰 값만 추출
-    return token.substring(TOKEN_PREFIX.length());
+  private void checkTokenValidity(String token) {
+    tokenService.checkTokenValidity(token);
   }
 
   public void reissueAccessTokenAfterRefreshToken(HttpServletResponse response,
@@ -103,11 +84,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   public void authenticateAccessToken(HttpServletRequest request)
       throws ServletException, IOException {
-    String token = tokenService.parseAccessToken(request);
-    if (token != null && isValidToken(token)) {
-      String email = tokenService.getMemberEmailForFilter(token);
-      memberRepository.findByEmail(email).ifPresent(this::saveAuthentication);
+    String trimmedAccessToken = getAccessTokenFromRequest(request);
+    checkTokenValidity(trimmedAccessToken);
+    String email = tokenService.getMemberEmailForFilter(trimmedAccessToken);
+    memberRepository.findByEmail(email).ifPresent(this::saveAuthentication);
+  }
+
+  public String getAccessTokenFromRequest(HttpServletRequest request) {
+    String trimmedToken = tokenService.parseAccessToken(request);
+    if (trimmedToken == null) {
+      log.error("authenticateAccessToken: [Nothing] 토큰 없음");
+      throw new CustomAuthException(ErrorCode.NO_PRINCIPAL);  // [100]
     }
+    return trimmedToken;
   }
 
   private String reissueRefreshToken(Member member) {

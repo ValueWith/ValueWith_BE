@@ -84,12 +84,11 @@ public class TokenService {
    * 토큰의 이메일 정보를 가져옵니다.
    * 주의사항: JwtAuthenticationFilter 에서 사용합니다. 이외의 곳에선 사용하지 말아주세요
    *
-   * @param token Bearer가 포함된 토큰
+   * @param trimmedToken Bearer가 포함된 토큰
    * @return token에 포함된 Email 정보
    */
-  public String getMemberEmailForFilter(String token) {
-    log.info("getMemberEmailForFilter - Authorization: " + token);
-    String trimmedToken = resolveTokenOnlyAtTokenService(token);
+  public String getMemberEmailForFilter(String trimmedToken) {
+    log.info("getMemberEmailForFilter - Authorization: " + trimmedToken);
     return this.parseClaimsForFilter(trimmedToken).get(CLAIM_EMAIL).toString();
   }
 
@@ -127,6 +126,41 @@ public class TokenService {
       return null;
     }
     return token.replace(BEARER, "");
+  }
+
+  /**
+   * 주어진 토큰의 claims에 포함된 만료시간이 남아있다면 true를 반환합니다.
+   * Jwt가 반환하는 예외를 로그로 남깁니다.
+   *
+   * @param trimmedToken 검증할 token
+   * @throws MalformedJwtException JWT 구성이 잘못되었을 경우
+   * @throws SignatureException 서명정보가 잘못되었을 경우
+   * @throws ExpiredJwtException 만료시간이 넘었을 경우
+   * @throws UnsupportedJwtException JWT 형식이 다를경우
+   * @throws IllegalArgumentException 위 예외 이외의 경우
+   */
+  public void checkTokenValidity(String trimmedToken) {
+    try {
+      Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(trimmedToken);
+    } catch (MalformedJwtException e) {
+      log.error("checkTokenValidity: [MalFormed] 잘못된 인증 정보");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_M);
+    } catch (SignatureException e) {
+      log.error("checkTokenValidity: [Signature] 잘못된 접근");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_S);
+    } catch (ExpiredJwtException e) {
+      log.error("checkTokenValidity: [Expired] 만료된 접근");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_E);
+    } catch (UnsupportedJwtException e) {
+      log.error("checkTokenValidity: [Unsupported] 잘못된 접근");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_U);
+    } catch (IllegalArgumentException e) {
+      log.error("checkTokenValidity: [Illegal] 잘못된 인증 정보");
+      throw new CustomAuthException(ErrorCode.INVALID_JWT_I);
+    } catch (Exception e) {
+      log.error("checkTokenValidity: ");
+      throw new CustomAuthException(ErrorCode.NO_PRINCIPAL);
+    }
   }
 
   /**

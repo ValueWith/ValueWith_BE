@@ -9,7 +9,9 @@ import com.valuewith.tweaver.auth.repository.HttpCookieOAuth2AuthorizationReques
 import com.valuewith.tweaver.auth.service.CustomMemberDetailService;
 import com.valuewith.tweaver.auth.service.OAuthUserCustomService;
 import com.valuewith.tweaver.commons.security.CustomJsonAuthenticationFilter;
+import com.valuewith.tweaver.commons.security.JwtAuthEntryPoint;
 import com.valuewith.tweaver.commons.security.JwtAuthenticationFilter;
+import com.valuewith.tweaver.commons.security.JwtDeniedHandler;
 import com.valuewith.tweaver.commons.security.service.TokenService;
 import com.valuewith.tweaver.member.repository.MemberRepository;
 import java.util.Arrays;
@@ -39,6 +41,8 @@ public class SecurityConfig {
   private final TokenService tokenService;
   private final MemberRepository memberRepository;
   private final AppProperties appProperties;
+  private final JwtDeniedHandler jwtDeniedHandler;
+  private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
   /**
    * swagger, h2-console 접근을 위한 설정입니다. 인증이 필요한 URI 목록 중 아래에 있는 [허용 URL]의 모든 접근을 허용합니다. 사실상 모든
@@ -88,15 +92,15 @@ public class SecurityConfig {
                 "/alert",
                 "/alert/**",
                 "/users/**",
-                "/groups/**",
+                "/groups/*/list",
+                "/groups/*/list/{tripGroupId}",
                 "/images/**",
                 "/member/**",
                 "/member",
                 "/oauth2/**",
                 "/calendar/**",
                 "/bookmark/**",
-                "/post",
-                "/post/**"
+                "/post/list"
             )
             .permitAll()
             // 회원만 들어갈 수 있는 API는 현재 Security에서 거르지 못합니다.
@@ -109,6 +113,10 @@ public class SecurityConfig {
         .headers().frameOptions().disable()
 
         .and()
+        .exceptionHandling(handler -> handler
+            .accessDeniedHandler(jwtDeniedHandler)
+            .authenticationEntryPoint(jwtAuthEntryPoint)
+        )
         .addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class)
         .addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class)
         .logout(logout -> logout.logoutSuccessUrl("/"))

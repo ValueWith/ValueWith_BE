@@ -2,8 +2,6 @@ package com.valuewith.tweaver.commons.security;
 
 import com.valuewith.tweaver.commons.PrincipalDetails;
 import com.valuewith.tweaver.commons.security.service.TokenService;
-import com.valuewith.tweaver.constants.ErrorCode;
-import com.valuewith.tweaver.exception.CustomAuthException;
 import com.valuewith.tweaver.member.entity.Member;
 import com.valuewith.tweaver.member.repository.MemberRepository;
 import java.io.IOException;
@@ -18,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
@@ -26,7 +23,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   public static final String TOKEN_HEADER = "Authorization";
-  public static final String TOKEN_PREFIX = "Bearer ";
 
   private final TokenService tokenService;
   private final MemberRepository memberRepository;
@@ -58,7 +54,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       AccessToken이 없거나 유효하지 않다면 -> 403
       AccessToken이 있고 유효하다면 -> 200
      */
-      authenticateAccessToken(request);
+      String headerToken = getAccessTokenFromRequest(request);
+      if (headerToken == null) {
+        filterChain.doFilter(request, response);
+        return;
+      }
+      authenticateAccessToken(headerToken);
     } catch (Exception e) {
       request.setAttribute("exception", e);
     }
@@ -82,21 +83,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     );
   }
 
-  public void authenticateAccessToken(HttpServletRequest request)
-      throws ServletException, IOException {
-    String trimmedAccessToken = getAccessTokenFromRequest(request);
+  public void authenticateAccessToken(String trimmedAccessToken) {
     checkTokenValidity(trimmedAccessToken);
     String email = tokenService.getMemberEmailForFilter(trimmedAccessToken);
     memberRepository.findByEmail(email).ifPresent(this::saveAuthentication);
   }
 
   public String getAccessTokenFromRequest(HttpServletRequest request) {
-    String trimmedToken = tokenService.parseAccessToken(request);
-    if (trimmedToken == null) {
-      log.error("authenticateAccessToken: [Nothing] 토큰 없음");
-      throw new CustomAuthException(ErrorCode.NO_PRINCIPAL);  // [100]
+    String bearerToken = request.getHeader(TOKEN_HEADER);
+    if (bearerToken == null) {
+      log.warn("getAccessTokenFromRequest: [Nothing] 토큰 없음");
+      return null;
     }
-    return trimmedToken;
+    return tokenService.parseAccessToken(request);
   }
 
   private String reissueRefreshToken(Member member) {

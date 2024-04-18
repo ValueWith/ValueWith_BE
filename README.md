@@ -1,7 +1,8 @@
 # ValueWith_BE
-spring을 활용한 여행 도우미 프로젝트입니다.
+사용자들이 쉽게 여행을 떠날 수 있도록 도와주는 당일치기 여행 스케줄링 + 일행 모집 커뮤니티 플랫폼입니다.
 - 전체 구조: https://github.com/ValueWith
 - API 문서(swagger): https://tweaver.site/swagger-ui.html
+- 기능 문서는 [WIKI](https://github.com/ValueWith/ValueWith_BE/wiki/%08%ED%8A%B8%EC%9C%84%EB%B2%84-%EA%B5%AC%ED%98%84-%EA%B8%B0%EB%8A%A5-(UseCase))에서 확인하실 수 있습니다.
 
 ## 디렉토리 구조
 <details>
@@ -256,3 +257,28 @@ spring을 활용한 여행 도우미 프로젝트입니다.
 
 </div>
 </details>
+
+## 사용 기술
+![spring boot](https://img.shields.io/badge/spring%20boot-6DB33F?style=for-the-badge&logo=spring%20boot&logoColor=white)
+![spring security](https://img.shields.io/badge/spring%20security-6DB33F?style=for-the-badge&logo=spring%20security&logoColor=white)
+![spring jpa](https://img.shields.io/badge/spring%20jpa-6DB33F?style=for-the-badge&logo=spring%20jpa&logoColor=white)
+<br />
+![stomp](https://img.shields.io/badge/stomp-000000?style=for-the-badge&&logoColor=white)
+![web socket](https://img.shields.io/badge/web%20socket-F56640?style=for-the-badge&&logoColor=white)
+![kakao mobility](https://img.shields.io/badge/kakao%20mobility-FFCD00?style=for-the-badge&logo=kakao&logoColor=black)
+![kakao login](https://img.shields.io/badge/kakao%20login-FFCD00?style=for-the-badge&logo=kakao&logoColor=black)
+<br />
+![mysql](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![query dsl](https://img.shields.io/badge/query%20dsl-007DB8?style=for-the-badge&logoColor=white)
+![jwt](https://img.shields.io/badge/jwt-FE2E9A?style=for-the-badge&logoColor=white)
+<br />
+![redis](https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![gradle](https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
+![junit](https://img.shields.io/badge/junit-25A162?style=for-the-badge&logo=junit5&logoColor=white)
+![postman](https://img.shields.io/badge/postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+
+## ERD
+![같이가치_2차_ERD_라이트](https://github.com/ValueWith/ValueWith_BE/assets/51254234/cf4573c2-92ec-4335-839a-52b198a67814)
+
+## WIKI
+- 트위버 구현 기능(UseCase) 문서만 존재합니다.

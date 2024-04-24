@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.message.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.valuewith.tweaver.auditing.BaseEntity;
 import com.valuewith.tweaver.chat.entity.ChatRoom;
 import com.valuewith.tweaver.member.entity.Member;
@@ -40,6 +41,7 @@ public class Message extends BaseEntity {
   @JoinColumn(name = "chat_room_id")
   private ChatRoom chatRoom;
 
+  @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
   private Member member;

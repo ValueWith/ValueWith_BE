@@ -105,7 +105,7 @@ kakao-rest-api-key: ${kakao-rest-api-key}
 app:
   oauth2:
     authorizedRedirectUris:
-      - https://tweaver.vercel.app/oauth2/kakao
+      - https://valuewith.site/oauth2/kakao
 
 logging:
   level:

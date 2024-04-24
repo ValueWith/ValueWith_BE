@@ -1,5 +1,6 @@
 package com.valuewith.tweaver.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.valuewith.tweaver.auditing.BaseEntity;
 import com.valuewith.tweaver.constants.Provider;
 import com.valuewith.tweaver.member.dto.MemberDto;
@@ -60,6 +61,7 @@ public class Member extends BaseEntity {
 
   private String refreshToken;  // refreshToken
 
+  @JsonIgnore
   @OneToMany(mappedBy = "member")
   @Builder.Default
   private List<Message> messages = new ArrayList<>();

@@ -281,7 +281,7 @@
 ![같이가치_2차_ERD_라이트](https://github.com/ValueWith/ValueWith_BE/assets/51254234/cf4573c2-92ec-4335-839a-52b198a67814)
 
 ## WIKI
-- Home
+- [Home](https://github.com/ValueWith/ValueWith_BE/wiki)
 - [트위버 구현 기능 (UseCase)](https://github.com/ValueWith/ValueWith_BE/wiki/%08%ED%8A%B8%EC%9C%84%EB%B2%84-%EA%B5%AC%ED%98%84-%EA%B8%B0%EB%8A%A5-(UseCase))
 - [트위버 규칙 & 컨벤션](https://github.com/ValueWith/ValueWith_BE/wiki/%ED%8A%B8%EC%9C%84%EB%B2%84-%EA%B7%9C%EC%B9%99-&-%EC%BB%A8%EB%B2%A4%EC%85%98)
 - [트위버 백엔드 API 명세서 (Notion 링크)](https://github.com/ValueWith/ValueWith_BE/wiki/%ED%8A%B8%EC%9C%84%EB%B2%84-%EB%B0%B1%EC%97%94%EB%93%9C-API-%EB%AA%85%EC%84%B8%EC%84%9C-(Notion-%EB%A7%81%ED%81%AC))
